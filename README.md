@@ -18,10 +18,6 @@ This script uses the following components:
     pip install langchain_community langchain_core requests
     ```
 
-2. Set up the Ollama model with the specific LLaMA configuration:
-    ```python
-    model = Ollama(model="llama3")
-    ```
 
 ### Script Details
 
@@ -34,7 +30,7 @@ from langchain_community.llms import Ollama
 from langchain_core.prompts import ChatPromptTemplate
 import requests
 
-# Template to format the question and code context
+
 template = '''
 Answer the question below.
 give a short answer
@@ -44,20 +40,20 @@ Question: {question}
 Answer:
 '''
 
-# Fetching code from GitHub repository
+
 url = 'https://raw.githubusercontent.com/kareem743/python/refs/heads/main/kareem.py'
 response = requests.get(url)
 file_content = response.text
 print(file_content)
 
-# Setting up the LLM model
+
 model = Ollama(model="llama3")
 
-# Preparing the prompt template
+
 prompt = ChatPromptTemplate.from_template(template)
 chain = prompt | model
 
-# Running the model with the code context and question
+
 result = chain.invoke({"context":file_content, "question": "explain the code"})
 print(result)
 
