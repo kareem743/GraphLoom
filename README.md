@@ -1,5 +1,5 @@
-# [GraphLoom] (https://drive.google.com/drive/folders/125z1exlm5WZHQAeCjUlHzaZLf1E48ukN) Demo
-(https://drive.google.com/drive/folders/125z1exlm5WZHQAeCjUlHzaZLf1E48ukN)
+# [GraphLoom](https://drive.google.com/drive/folders/125z1exlm5WZHQAeCjUlHzaZLf1E48ukN) Demo
+
 
 # Code Explanation and Usage
 
