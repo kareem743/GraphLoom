@@ -59,7 +59,7 @@ result = chain.invoke({"context":file_content, "question": "explain the code"})
 print(result)
 ```
 
-# Data sets
+# potential data for fine tuning Llama
 * [angie-chen55/python-github-code](https://huggingface.co/datasets/angie-chen55/python-github-code)
 * [koutch/stackoverflow_python](https://huggingface.co/datasets/koutch/stackoverflow_python)
 
