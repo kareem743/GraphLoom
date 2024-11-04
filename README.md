@@ -1,6 +1,6 @@
 # GraphLoom Demo
 
-##Llama demo
+## Llama Demo
 
 ### Running the Docker Container
 
