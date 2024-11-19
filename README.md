@@ -1,5 +1,4 @@
-# Preparing the markdown document for the user's project description and approach
-markdown_document = """
+
 # Project Description and Approach
 
 ## Project Overview
@@ -61,12 +60,6 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
 This approach ensures the system delivers precise, enriched, and contextually aware insights for software engineering tasks. It combines the structured power of KGs with the generative flexibility of LLMs, creating a robust and adaptable tool.
 """
 
-# Saving the document to a markdown file for the user
-file_path_markdown = "/mnt/data/Project_Description_and_Approach.md"
-with open(file_path_markdown, "w") as file:
-    file.write(markdown_document)
-
-file_path_markdown
 
 # [GraphLoom](https://drive.google.com/drive/folders/125z1exlm5WZHQAeCjUlHzaZLf1E48ukN) Demo
 
