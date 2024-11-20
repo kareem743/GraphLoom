@@ -41,25 +41,12 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
   - Update the KG using LLaMA for further extraction and refinement.
 - **Outcome**: A dynamic system that evolves with new data and user needs.
 
-## Key Features
-- **Efficiency**: Automates knowledge extraction and organization.
-- **Accuracy**: Uses the KG to ground LLaMA’s responses, avoiding hallucinations.
-- **Adaptability**: Handles incomplete or ambiguous queries using generative reasoning.
-- **Scalability**: Continuously enriches the KG as new data is added.
 
-## Implementation Workflow
-1. **Phase 1: KG Bootstrapping**
-   - Use LLaMA to extract initial entities and relationships.
-   - Define and implement the KG schema.
-2. **Phase 2: LLM and KG Integration**
-   - Enable LLaMA to query the KG during inference for contextual responses.
-3. **Phase 3: Continuous Learning**
-   - Refine the KG schema and update the graph as new data becomes available.
-# Code Generation and Documentation with Knowledge Graphs and LLMs
+## Code Generation and Documentation with Knowledge Graphs and LLMs
 
-## 1. Code Generation
+### 1. Code Generation
 
-### Goal
+Goal:
 Automatically generate functional code snippets using structured knowledge from Knowledge Graphs (KG).
 
 ### Process
@@ -97,7 +84,7 @@ Quick generation of boilerplate code or snippets that developers can use as a st
 
 ## 2. Code Explanation
 
-### Goal
+Goal:
 Provide detailed and understandable explanations for code elements using KG knowledge.
 
 ### Process
@@ -128,7 +115,7 @@ Ideal for:
 
 ## 3. Documentation Generation
 
-### Goal
+Goal
 Automate creation of comprehensive documentation by combining KG data with LLM capabilities.
 
 ### Process
