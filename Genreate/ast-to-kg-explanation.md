@@ -10,14 +10,10 @@ This document explains how the `generate_ast_to_kg.py` script works to transform
 ## Setup
 
 ### 1. Install Docker
-- **Windows/Mac**: Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop).
-- **Linux**: Install via package manager (e.g., `sudo apt install docker.io` on Ubuntu).
+- **Windows/Mac**: Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop). optional tho but on my laptop neo4j was slow 
 
-Verify Docker is running:
-```bash
-docker --version
-docker run hello-world
-```
+
+
 
 ### 2. Run Neo4j in Docker
 Pull and run the Neo4j container:
@@ -288,8 +284,26 @@ if __name__ == "__main__":
     - Calls `init_graph` to create a `:File` node.
     - Uses `ASTGraphBuilder` to build the AST graph in Neo4j.
   - `driver.close()`: Closes the Neo4j connection.
-- **Purpose**: Ties everything together into a single executable workflow.
+# Script Execution
 
+## Executed the Main Script
+
+* **What We Did**: We ran generate_ast_to_kg.py with a specific GitHub repository URL as a command-line argument:
+
+```bash
+cd C:\Users\karee\Desktop\GP2
+python generate_ast_to_kg.py https://github.com/TheAlgorithms/Python.git
+```
+
+* **Command Breakdown**:
+   * `cd C:\Users\karee\Desktop\GP2`: Navigated to the directory containing the script.
+   * `python`: Invoked the Python interpreter.
+   * `generate_ast_to_kg.py`: The script file to execute.
+   * `https://github.com/TheAlgorithms/Python.git`: The argument specifying the repository to process.
+
+* **Why**:
+   * The script requires a repository URL to clone and analyze its Python files.
+   * We chose TheAlgorithms/Python because it's a public repository with many Python files, ideal for testing the script's functionality.
 ## Overall Flow
 
 1. **Input**: A GitHub repository URL (e.g., `https://github.com/TheAlgorithms/Python.git`).
