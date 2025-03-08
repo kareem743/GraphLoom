@@ -1,6 +1,37 @@
 # Understanding the `generate_ast_to_kg.py` Script
 
 This document explains how the `generate_ast_to_kg.py` script works to transform Python code from a GitHub repository into a Knowledge Graph (KG) in Neo4j.
+# Prerequisites
+
+- **Docker**: To run Neo4j in a container.
+- **Python 3.6+**: With required packages (`gitpython`, `neo4j`).
+- **Neo4j**: Running in a Docker container (see setup below).
+
+## Setup
+
+### 1. Install Docker
+- **Windows/Mac**: Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop).
+- **Linux**: Install via package manager (e.g., `sudo apt install docker.io` on Ubuntu).
+
+Verify Docker is running:
+```bash
+docker --version
+docker run hello-world
+```
+
+### 2. Run Neo4j in Docker
+Pull and run the Neo4j container:
+```bash
+docker run -d --name neo4j -p 7474:7474 -p 7687:7687 -v neo4j-data:/data -v neo4j-logs:/logs -e NEO4J_AUTH=neo4j/testpassword123 neo4j
+```
+- Access the Neo4j Browser at `http://localhost:7474` (username: `neo4j`, password: `testpassword123`).
+
+### 3. Install Python Dependencies
+Install required Python packages:
+```bash
+pip install gitpython neo4j
+```
+
 
 ## Full Code for Reference
 
