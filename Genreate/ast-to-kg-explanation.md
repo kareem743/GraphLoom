@@ -1,4 +1,4 @@
-# Understanding the `generate_ast_to_kg.py` Script
+# Step 1`generate_ast_to_kg.py` Script
 
 This document explains how the `generate_ast_to_kg.py` script works to transform Python code from a GitHub repository into a Knowledge Graph (KG) in Neo4j.
 # Prerequisites
