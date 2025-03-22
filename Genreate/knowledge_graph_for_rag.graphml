@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d5" for="edge" attr.name="relationship" attr.type="string" />
+  <key id="d4" for="node" attr.name="line" attr.type="long" />
+  <key id="d3" for="node" attr.name="name" attr.type="string" />
+  <key id="d2" for="node" attr.name="snippet" attr.type="string" />
+  <key id="d1" for="node" attr.name="chunk" attr.type="long" />
+  <key id="d0" for="node" attr.name="type" attr.type="string" />
+  <graph edgedefault="directed">
+    <node id="Chunk_1">
+      <data key="d0">Chunk</data>
+      <data key="d1">1</data>
+      <data key="d2">
+# Sample Python code
+import os
+
+def greet(name):
+    print(f"Hello, {name}!")
+
+# Another comment
+class MyClass:
+    def __init__(self):
+        self.value = 42
+    
+    def get_value(self):
+        return self.value
+</data>
+    </node>
+    <node id="Import_import os_1">
+      <data key="d0">Import</data>
+      <data key="d3">import os</data>
+      <data key="d1">1</data>
+      <data key="d4">2</data>
+      <data key="d2">import os</data>
+    </node>
+    <node id="Function_greet_1">
+      <data key="d0">Function</data>
+      <data key="d3">greet</data>
+      <data key="d1">1</data>
+      <data key="d4">4</data>
+      <data key="d2">def greet(name):
+    print(f"Hello, {name}!")</data>
+    </node>
+    <node id="Call_print_1">
+      <data key="d0">Call</data>
+      <data key="d3">print</data>
+      <data key="d1">1</data>
+      <data key="d4">5</data>
+      <data key="d2">print(f"Hello, {name}!")</data>
+    </node>
+    <node id="Class_MyClass_1">
+      <data key="d0">Class</data>
+      <data key="d3">MyClass</data>
+      <data key="d1">1</data>
+      <data key="d4">8</data>
+      <data key="d2">class MyClass:
+    def __init__(self):
+        self.value = 42
+    
+    def get_value(self):
+        return self.value</data>
+    </node>
+    <node id="Function___init___1">
+      <data key="d0">Function</data>
+      <data key="d3">__init__</data>
+      <data key="d1">1</data>
+      <data key="d4">9</data>
+      <data key="d2">def __init__(self):
+        self.value = 42</data>
+    </node>
+    <node id="Function_get_value_1">
+      <data key="d0">Function</data>
+      <data key="d3">get_value</data>
+      <data key="d1">1</data>
+      <data key="d4">12</data>
+      <data key="d2">def get_value(self):
+        return self.value</data>
+    </node>
+    <node id="Chunk_2">
+      <data key="d0">Chunk</data>
+      <data key="d1">2</data>
+      <data key="d2">def another_function():
+    x = 1 + 2
+    return x
+</data>
+    </node>
+    <node id="Function_another_function_2">
+      <data key="d0">Function</data>
+      <data key="d3">another_function</data>
+      <data key="d1">2</data>
+      <data key="d4">0</data>
+      <data key="d2">def another_function():
+    x = 1 + 2
+    return x</data>
+    </node>
+    <edge source="Chunk_1" target="Import_import os_1">
+      <data key="d5">imports</data>
+    </edge>
+    <edge source="Chunk_1" target="Function_greet_1">
+      <data key="d5">contains</data>
+    </edge>
+    <edge source="Chunk_1" target="Class_MyClass_1">
+      <data key="d5">contains</data>
+    </edge>
+    <edge source="Chunk_1" target="Function___init___1">
+      <data key="d5">contains</data>
+    </edge>
+    <edge source="Chunk_1" target="Function_get_value_1">
+      <data key="d5">contains</data>
+    </edge>
+    <edge source="Function_greet_1" target="Call_print_1">
+      <data key="d5">calls</data>
+    </edge>
+    <edge source="Chunk_2" target="Function_another_function_2">
+      <data key="d5">contains</data>
+    </edge>
+  </graph>
+</graphml>
