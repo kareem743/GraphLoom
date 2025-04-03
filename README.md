@@ -10,8 +10,7 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
 
 ## [How to Evaluate?](Evaluation)
 
-Here’s a summarized table of all evaluation metrics discussed throughout the chat for the "Intelligent GraphRag Integration for Enhanced Guidance" system, covering the overall project, the "text to Cypher" component, and the knowledge graph itself. This consolidates metrics from retrieval, generation, user studies, task-specific evaluation, text-to-Cypher translation, and knowledge graph quality, providing a comprehensive overview as of April 3, 2025.
-
+Here’s a summarized table of all evaluation metrics covering the overall project, the "text to Cypher" component, and the knowledge graph itself. This consolidates metrics from retrieval, generation, user studies, task-specific evaluation, text-to-Cypher translation, and knowledge graph quality.
 | **Metric**                     | **Type**          | **Description**                                                                                   | **Application Context**                                                                                   |
 |-------------------------------|-------------------|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
 | **Precision**                 | [Retrieval](Evaluation/Evaluation_retrieval\generation.md)         | Proportion of retrieved code structures (e.g., functions, dependencies) that are relevant.         | Assesses quality of subgraphs retrieved from Neo4j for queries like "Explain the merge_sort function."    |
