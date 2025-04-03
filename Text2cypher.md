@@ -11,10 +11,6 @@ An unexpected detail is that fine-tuning can be done on cloud platforms like Hug
 
 
 ---
-
-Research suggests this is a standard approach, with Neo4j's ecosystem, including tools like NeoDash, supporting LLM-based translation, as noted in [NeoDash user guide](https://neo4j.com/labs/neodash/2.4/user-guide/extensions/natural-language-queries/). The process involves providing the LLM with the graph schema and prompting it to generate Cypher, ensuring alignment with the database's structure. An unexpected detail, given recent trends in 2025, is the potential for fine-tuning on cloud platforms like HuggingFace or RunPod, enhancing scalability, as mentioned in [Neo4j blog](https://neo4j.com/blog/developer/fine-tuned-text2cypher-2024-model/).
-
-#### How Can We Do It?
 Implementing text-to-Cypher translation involves several approaches, each suited to different stages of development:
 
 - **Prototyping with Pre-trained LLMs**: Use a pre-trained model like GPT-4, as described in [Medium post](https://medium.com/neo4j/generating-cypher-queries-with-chatgpt-4-on-any-graph-schema-a57d7082a7e7), by connecting to Neo4j, fetching the schema, and prompting the model. For example, a Python class like `Neo4jGPTQuery` initializes with Neo4j credentials and OpenAI API key, then uses the schema to generate queries. This is ideal for initial testing, leveraging LangChain for integration, as seen in [Medium post](https://medium.com/@muthoju.pavan/demystifying-natural-language-to-cypher-conversion-with-openai-neo4j-langchain-and-langsmith-2dbecb1e2ce9).
