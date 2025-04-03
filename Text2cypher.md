@@ -19,9 +19,6 @@ This approach ensures we’re not just getting the words right, but also the res
 
 ---
 
-#### What is the Text to Cypher Part?
-Text-to-Cypher translation is the process of converting natural language queries into Cypher queries for Neo4j, a graph database storing the codebase's structure as nodes (e.g., File, Class, Function) and relationships (e.g., CONTAINS, CALLS, USES). This is crucial for the Graph-RAG system, as it bridges user intent with the structured data, allowing developers to ask questions like "What does the DataLoader class depend on?" and retrieve corresponding subgraphs. The translation is typically performed by an LLM, which understands the schema (e.g., node labels, relationship types) and generates Cypher queries, as seen in examples from [GitHub repo](https://github.com/neo4j-labs/text2cypher), where datasets include pairs like "Show functions called by process_data" and `MATCH (caller:Function {name: 'process_data'})-[:CALLS]->(callee:Function) RETURN caller.name, callee.name`.
-
 Research suggests this is a standard approach, with Neo4j's ecosystem, including tools like NeoDash, supporting LLM-based translation, as noted in [NeoDash user guide](https://neo4j.com/labs/neodash/2.4/user-guide/extensions/natural-language-queries/). The process involves providing the LLM with the graph schema and prompting it to generate Cypher, ensuring alignment with the database's structure. An unexpected detail, given recent trends in 2025, is the potential for fine-tuning on cloud platforms like HuggingFace or RunPod, enhancing scalability, as mentioned in [Neo4j blog](https://neo4j.com/blog/developer/fine-tuned-text2cypher-2024-model/).
 
 #### How Can We Do It?
