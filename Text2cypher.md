@@ -1,11 +1,5 @@
-### Key Points
-- Research suggests the "text to Cypher" part translates natural language queries into Cypher for Neo4j using LLMs, likely improving code retrieval.
-- It seems likely that we can do this by fine-tuning open-source LLMs like Llama 3 on datasets, or using pre-trained models like GPT-4 for prototyping.
-- The evidence leans toward evaluating it with BLEU for textual accuracy and ExactMatch for functional correctness, plus user feedback for real-world use.
 
----
-
-### What is the Text to Cypher Part?
+# What is the Text to Cypher Part?
 The "text to Cypher" part is about turning simple questions, like "Show me functions called by process_data," into special commands called Cypher queries. These queries help search a database (Neo4j) that stores the structure of code, like files and functions, making it easier for developers to find what they need. We use a smart AI model, called a Large Language Model (LLM), to do this translation, bridging what developers ask in plain English with what the database understands.
 
 ### How Can We Do It?
