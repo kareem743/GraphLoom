@@ -25,15 +25,6 @@ This approach ensures we’re not just getting the words right, but also the res
 
 ---
 
----
-
-### Survey Note: Detailed Analysis of Text to Cypher Translation in the Intelligent GraphRag Integration for Enhanced Guidance System
-
-This note provides a comprehensive examination of the "text to Cypher" component within the "Intelligent GraphRag Integration for Enhanced Guidance" system, focusing on its implementation and evaluation for software engineering codebases as of April 2025. The system aims to enhance developer interaction with complex codebases by integrating Knowledge Graphs (KGs), Graph-Based Retrieval-Augmented Generation (Graph-RAG), and Large Language Models (LLMs), with a specific focus on parsing code into Abstract Syntax Trees (ASTs), transforming them into Labeled Property Graphs (LPGs) stored in Neo4j, and using Cypher queries for retrieval. The text-to-Cypher translation is a critical step, translating natural language queries into Cypher for graph database querying, addressing the core problem of navigating poorly documented codebases and reducing LLM hallucinations.
-
-#### Background and Context
-The project addresses the challenge of software development involving complex, often undocumented codebases, where standard LLMs struggle with context, leading to hallucinations—incorrect or out-of-context code and explanations. Junior developers face onboarding difficulties, while senior engineers spend significant time understanding code before modifications. The proposed solution is a hybrid system where codebases, initially from GitHub repositories like the 'Algorithms' Python repository, are parsed into ASTs, transformed into Neo4j graphs, and queried using Cypher, with retrieved subgraphs fed to an LLM for accurate outputs. The text-to-Cypher component is part of the query generation step, where an LLM translates user prompts, such as "Explain the merge_sort function," into Cypher queries like `MATCH (f:Function {name: 'merge_sort'})-[:CALLS]->(c:Function) RETURN f.name, c.name`, enabling retrieval of relevant code structures.
-
 #### What is the Text to Cypher Part?
 Text-to-Cypher translation is the process of converting natural language queries into Cypher queries for Neo4j, a graph database storing the codebase's structure as nodes (e.g., File, Class, Function) and relationships (e.g., CONTAINS, CALLS, USES). This is crucial for the Graph-RAG system, as it bridges user intent with the structured data, allowing developers to ask questions like "What does the DataLoader class depend on?" and retrieve corresponding subgraphs. The translation is typically performed by an LLM, which understands the schema (e.g., node labels, relationship types) and generates Cypher queries, as seen in examples from [GitHub repo](https://github.com/neo4j-labs/text2cypher), where datasets include pairs like "Show functions called by process_data" and `MATCH (caller:Function {name: 'process_data'})-[:CALLS]->(callee:Function) RETURN caller.name, callee.name`.
 
@@ -73,11 +64,6 @@ The evidence leans toward BLEU and ExactMatch as standard metrics, with the Nove
 | ExactMatch              | Execution     | Compares execution results of predicted vs. reference, binary 0 or 1        | Ensures functional correctness of queries          |
 | User Feedback           | Qualitative   | Developer assessment of query correctness and utility                       | Validates real-world applicability                 |
 
-#### Current State and Trends in 2025
-As of April 2025, Graph-RAG systems are gaining traction, with Microsoft’s GraphRAG, open-sourced in mid-2024, achieving over ten thousand stars on GitHub ([GitHub repo](https://github.com/microsoft/graphrag)). IBM’s tutorial on Graph-RAG with knowledge graphs, published in February 2025, mentions Neo4j alongside other databases, reinforcing its relevance ([IBM tutorial](https://www.ibm.com/think/tutorials/knowledge-graph-rag)). A December 2024 review notes tensor-based reranking advancements, suggesting Graph-RAG will see widespread application, potentially impacting codebase tools ([RAGFlow blog](https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review)). These trends support text-to-Cypher evaluation, emphasizing metrics like BLEU and ExactMatch for code-specific tasks.
-
-#### Novelty and Impact
-The project’s novelty lies in tailoring Graph-RAG with AST-based KGs for software engineering, with text-to-Cypher enhancing query accuracy. Evaluation ensures reduced hallucinations, faster onboarding for junior developers, and increased productivity for seniors. An unexpected detail is Neo4j’s ability to handle both structured and unstructured data, potentially extending to other engineering tasks, like analyzing project workflows, by 2025, given recent advancements.
 
 #### Conclusion
 The text-to-Cypher component is vital, translating natural language to Cypher using LLMs, implemented via pre-trained models for prototyping or fine-tuning for production, evaluated with BLEU for textual accuracy, ExactMatch for functional correctness, and user feedback for real-world utility. This aligns with project goals, ensuring context-aware assistance for developers, with potential extensions to other engineering tasks by 2025.
