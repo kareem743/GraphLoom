@@ -9,13 +9,6 @@ To make this work, we have a couple of options:
 
 An unexpected detail is that fine-tuning can be done on cloud platforms like HuggingFace or RunPod, making it easier to handle large datasets without heavy local setup.
 
-### How to Evaluate It?
-To check if it’s working well, we’ll look at:
-- **Text Match**: Use a score called BLEU to see how close the generated Cypher matches the correct one, like comparing essays.
-- **Function Check**: Run the Cypher commands on Neo4j and see if they give the same results as the right ones, using a metric called ExactMatch.
-- **User Feedback**: Ask developers if the translations make sense for their needs, ensuring it helps in real projects.
-
-This approach ensures we’re not just getting the words right, but also the results, which is crucial for developers.
 
 ---
 
