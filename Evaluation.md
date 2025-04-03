@@ -69,15 +69,9 @@ Beyond direct code assistance, our combined evaluation approach may reveal insig
 The evaluation methodology and concepts discussed draw upon established practices and tools in RAG and Graph RAG evaluation.
 
 *   **General RAG & Evaluation Principles:**
-    *   The Ultimate Guide to Evaluate RAG System Components: What You Need to Know - [https://myscale.com/blog/ultimate-guide-to-evaluate-rag-system/](https://myscale.com/blog/ultimate-guide-to-evaluate-rag-system/)
-    *   RAG Evaluation: Don’t let customers tell you first | Pinecone - [https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/](https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/)
-    *   Retrieval Augmented Generation (RAG) for LLMs | Prompt Engineering Guide - [https://www.promptingguide.ai/research/rag](https://www.promptingguide.ai/research/rag)
-    *   The Rise and Evolution of RAG in 2024: A Year in Review | RAGFlow - [https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review](https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review)
+    *   [The Ultimate Guide to Evaluate RAG System Components: What You Need to Know](https://myscale.com/blog/ultimate-guide-to-evaluate-rag-system/)
+    *   [RAG Evaluation: Don’t let customers tell you first | Pinecone](https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/)
+    *   [Retrieval Augmented Generation (RAG) for LLMs | Prompt Engineering Guide][https://www.promptingguide.ai/research/rag](https://www.promptingguide.ai/research/rag)
+    *   [The Rise and Evolution of RAG in 2024: A Year in Review | RAGFlow](https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review)
+    *   [RAGAS Documentation](https://docs.ragas.io/en/stable/)
 
-*   **Evaluation Tools:**
-    *   RAGAS Documentation - [https://docs.ragas.io/en/stable/](https://docs.ragas.io/en/stable/)
-
-*   **Graph RAG & Supporting Technology:**
-    *   Implementing Graph RAG Using Knowledge Graphs | IBM - [https://www.ibm.com/think/tutorials/knowledge-graph-rag](https://www.ibm.com/think/tutorials/knowledge-graph-rag)
-    *   GitHub - microsoft/graphrag - [https://github.com/microsoft/graphrag](https://github.com/microsoft/graphrag)
-    *   Neo4j Graph Database & Analytics - [https://neo4j.com/](https://neo4j.com/)
