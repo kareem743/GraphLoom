@@ -71,7 +71,7 @@ The evaluation methodology and concepts discussed draw upon established practice
 *   **General RAG & Evaluation Principles:**
     *   [The Ultimate Guide to Evaluate RAG System Components: What You Need to Know](https://myscale.com/blog/ultimate-guide-to-evaluate-rag-system/)
     *   [RAG Evaluation: Don’t let customers tell you first | Pinecone](https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/)
-    *   [Retrieval Augmented Generation (RAG) for LLMs | Prompt Engineering Guide][https://www.promptingguide.ai/research/rag](https://www.promptingguide.ai/research/rag)
+    *   [Retrieval Augmented Generation (RAG) for LLMs | Prompt Engineering Guide](https://www.promptingguide.ai/research/rag)
     *   [The Rise and Evolution of RAG in 2024: A Year in Review | RAGFlow](https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review)
     *   [RAGAS Documentation](https://docs.ragas.io/en/stable/)
 
