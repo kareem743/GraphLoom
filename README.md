@@ -8,7 +8,8 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
 
 ![Architecture diagram showing the system's workflow with GitHub code processing through AST to GraphDB, with LLM logic and SPARQL query layers, and a front-end interface for user interaction](./Intelligent_GraphRag_Integration_for_Enhanced_Guidance-Page-1.drawio.png)
 
-##[Evaluation](Evaluation)
+## Evaluation](Evaluation)
+
 Below is a summarized table of the evaluation metrics for the "Intelligent GraphRag Integration for Enhanced Guidance" system, covering the overall project evaluation and the specific "text to Cypher" component, based on the previous responses. The table includes the metric name, type, description, and application context, making it easy to compare and understand their purposes.
 
 | **Metric**            | **Type**          | **Description**                                                                                   | **Application Context**                                                                                   |
