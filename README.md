@@ -8,6 +8,11 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
 
 ![Architecture diagram showing the system's workflow with GitHub code processing through AST to GraphDB, with LLM logic and SPARQL query layers, and a front-end interface for user interaction](./Intelligent_GraphRag_Integration_for_Enhanced_Guidance-Page-1.drawio.png)
 
+
+
+
+
+
 ## [How to Evaluate?](Evaluation)
 
 Here’s a summarized table of all evaluation metrics covering the overall project, the "text to Cypher" component, and the knowledge graph itself. This consolidates metrics from retrieval, generation, user studies, task-specific evaluation, text-to-Cypher translation, and knowledge graph quality.
