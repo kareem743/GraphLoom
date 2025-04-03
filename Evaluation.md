@@ -1,14 +1,10 @@
-# Project: Intelligent GraphRag Integration for Enhanced Guidance
-
-This project aims to enhance software engineer productivity when working with complex codebases through an intelligent GraphRag integration. This document outlines the methodology used to evaluate its effectiveness.
-
-## Evaluation Methodology
+# Evaluation Methodology
 
 Our evaluation employs a multi-faceted approach, focusing on how well the system assists software engineers. We break down the evaluation into the system's core components (retrieval and generation) and assess its real-world impact through user studies and task-specific benchmarks on actual codebases.
 
 ### 1. Retrieval Evaluation (Finding the Right Code)
 
-We assess the system's ability to accurately locate relevant code structures (e.g., functions, classes, dependencies) within the codebase graph (e.g., Neo4j) based on user queries.
+We assess the system's ability to accurately locate relevant code structures (e.g., functions, classes, dependencies) within the codebase graph (e.g., stored in Neo4j) based on user queries.
 
 *   **Goal:** Check if the system finds the *correct* and *complete* set of code elements quickly.
 *   **Metrics:**
@@ -65,3 +61,23 @@ We test the system's performance on specific, realistic tasks using actual code 
 ## Potential Future Insights
 
 Beyond direct code assistance, our combined evaluation approach may reveal insights into how this technology could be applied to broader software engineering challenges, such as analyzing complex project workflows. This could potentially expand the system's application areas by 2025.
+
+---
+
+## Citations
+
+The evaluation methodology and concepts discussed draw upon established practices and tools in RAG and Graph RAG evaluation.
+
+*   **General RAG & Evaluation Principles:**
+    *   The Ultimate Guide to Evaluate RAG System Components: What You Need to Know - [https://myscale.com/blog/ultimate-guide-to-evaluate-rag-system/](https://myscale.com/blog/ultimate-guide-to-evaluate-rag-system/)
+    *   RAG Evaluation: Don’t let customers tell you first | Pinecone - [https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/](https://www.pinecone.io/learn/series/vector-databases-in-production-for-busy-engineers/rag-evaluation/)
+    *   Retrieval Augmented Generation (RAG) for LLMs | Prompt Engineering Guide - [https://www.promptingguide.ai/research/rag](https://www.promptingguide.ai/research/rag)
+    *   The Rise and Evolution of RAG in 2024: A Year in Review | RAGFlow - [https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review](https://ragflow.io/blog/the-rise-and-evolution-of-rag-in-2024-a-year-in-review)
+
+*   **Evaluation Tools:**
+    *   RAGAS Documentation - [https://docs.ragas.io/en/stable/](https://docs.ragas.io/en/stable/)
+
+*   **Graph RAG & Supporting Technology:**
+    *   Implementing Graph RAG Using Knowledge Graphs | IBM - [https://www.ibm.com/think/tutorials/knowledge-graph-rag](https://www.ibm.com/think/tutorials/knowledge-graph-rag)
+    *   GitHub - microsoft/graphrag - [https://github.com/microsoft/graphrag](https://github.com/microsoft/graphrag)
+    *   Neo4j Graph Database & Analytics - [https://neo4j.com/](https://neo4j.com/)
