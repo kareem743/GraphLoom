@@ -25,8 +25,9 @@ Here’s a summarized table of all evaluation metrics discussed throughout the c
 | **Time to Task Completion**   | User Study        | Measures time taken by developers to complete tasks using the system vs. baselines.               | Assesses productivity gains for junior and senior developers, e.g., onboarding or code comprehension.    |
 | **User Satisfaction**         | User Study        | Qualitative feedback from developers on system usability and helpfulness via surveys/interviews.   | Ensures practical utility and developer trust in the system’s outputs for real projects.                 |
 
-##Structural (KG)
-| **Metric**                     | **Type**          | **Description**                                                                                   | **Application Context** 
+## Structural (KG)
+| **Metric**                     | **Type**          | **Description**                                                                                   | **Application Context**                                                                                   |
+|-------------------------------|-------------------|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
 | **Node Count Accuracy**       | Structural (KG)   | Compares number of nodes (e.g., functions, classes) in graph to source code, measures coverage.    | Ensures all code entities are captured in the knowledge graph, critical for completeness.                |
 | **Edge Accuracy (Relationships)** | Structural (KG) | Verifies relationships (e.g., CALLS, INHERITS) in graph match those extracted from code.         | Checks if call graphs and inheritance hierarchies are correct, essential for query accuracy.             |
 | **Call Graph Coverage**       | Completeness (KG) | Percentage of function calls in code represented as edges in graph.                               | Measures how well dynamic relationships are captured, impacting query results like "functions called by X."|
