@@ -24,7 +24,7 @@ Here’s a summarized table of all evaluation metrics covering the overall proje
 | **Time to Task Completion**   | User Study        | Measures time taken by developers to complete tasks using the system vs. baselines.               | Assesses productivity gains for junior and senior developers, e.g., onboarding or code comprehension.    |
 | **User Satisfaction**         | User Study        | Qualitative feedback from developers on system usability and helpfulness via surveys/interviews.   | Ensures practical utility and developer trust in the system’s outputs for real projects.                 |
 
-## Structural (KG)
+## Structural (KG) [Evaluation](Evaluation/KG_Evaluation.md)
 | **Metric**                     | **Type**          | **Description**                                                                                   | **Application Context**                                                                                   |
 |-------------------------------|-------------------|---------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|
 | **Node Count Accuracy**       | Structural (KG)   | Compares number of nodes (e.g., functions, classes) in graph to source code, measures coverage.    | Ensures all code entities are captured in the knowledge graph, critical for completeness.                |
