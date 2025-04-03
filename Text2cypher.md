@@ -65,8 +65,7 @@ The evidence leans toward BLEU and ExactMatch as standard metrics, with the Nove
 | User Feedback           | Qualitative   | Developer assessment of query correctness and utility                       | Validates real-world applicability                 |
 
 
-#### Conclusion
-The text-to-Cypher component is vital, translating natural language to Cypher using LLMs, implemented via pre-trained models for prototyping or fine-tuning for production, evaluated with BLEU for textual accuracy, ExactMatch for functional correctness, and user feedback for real-world utility. This aligns with project goals, ensuring context-aware assistance for developers, with potential extensions to other engineering tasks by 2025.
+
 
 ---
 
