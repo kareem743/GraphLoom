@@ -1,0 +1,13 @@
+{
+  "code_index_ts_v2": {
+    "input_files": [
+      "temp_code/processor.py",
+      "temp_code/calculator.js"
+    ],
+    "entity_vector_collection": "code_index_ts_v2_entities",
+    "chunk_vector_collection": "code_index_ts_v2_chunks",
+    "knowledge_graph_file": "code_index_ts_v2_graph.graphml",
+    "num_unique_entities": 0,
+    "num_text_chunks": 3
+  }
+}
