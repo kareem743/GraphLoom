@@ -123,9 +123,9 @@ def get_fallback_llm():
 
 # --- Configuration (Adjust as needed) ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2" # Or another SentenceTransformer model
+EMBEDDING_MODEL_NAME = "sentence-transformers/multi-qa-MiniLM-L6-cos-v1" # Or another SentenceTransformer model
 LLM_CLIENT = get_llm_client() # Initialize LLM client (Ollama or Fallback)
-CHUNK_TOKEN_LIMIT = 350 # Adjust token limit for structure-aware chunking
+CHUNK_TOKEN_LIMIT = 450 # Adjust token limit for structure-aware chunking
 CHUNK_ENCODING = "cl100k_base" # Encoding for chunking token count (matches tiktoken default)
 EMBEDDING_ENCODING = "cl100k_base" # Encoding for general token counts (often same as chunking)
 CHROMA_PATH_PREFIX = "./chroma_db_struct_chunk_" # Path prefix for ChromaDB persistence
@@ -459,6 +459,7 @@ class CodeParser:
         lines_found = []
         self._traverse_for_lines(root_node, node_types, lines_found)
         return sorted(list(set(lines_found))) # Return unique, sorted 0-based line indices
+
 
 
 # --- NEW Structure-Aware Chunking Function (Adapted from Snippet 1) ---
@@ -1375,18 +1376,23 @@ if __name__ == "__main__":
     # (Dummy file creation remains the same)
     if not os.path.exists("temp_code"): os.makedirs("temp_code")
     with open("temp_code/processor.py", "w", encoding='utf-8') as f: f.write("""
-import os
-import json
-import logging # Added import
-    def t(s):
-       print(s)
-    # Constructor
-    def __init__(self, source_path: str):
-        '''Initializes the processor with a source path.'''
-        self.source = source_path
-        self.data = None # Instance attribute
-        t(source_path) # Built-in call
+# example.py
 
+def printfun():
+  
+  print("Hello from printfun!") # Built-in print
+
+def loop():
+  #This function loops 3 times and calls printfun.
+  for i in range(3):
+     printfun() # Call to printfun
+
+def run_loops(num_times):
+  #Runs the loop function multiple times.
+  print(f"Running the loop {num_times} times.") # Built-in print
+  for _ in range(num_times):
+      loop() # Call to loop
+  return f"Completed {num_times} loop runs."
 
 """)
 
@@ -1395,7 +1401,7 @@ import logging # Added import
 
     # --- Configuration ---
     # Set True to try using Ollama (make sure it's running and model is pulled!)
-    USE_LLM_DESCRIPTIONS = False
+    USE_LLM_DESCRIPTIONS = True
     # Set Neo4j credentials via environment variables or modify defaults in Config section above.
     # --- --- --- --- --- ---
 
