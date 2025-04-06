@@ -8,7 +8,126 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
 
 ![Architecture diagram showing the system's workflow with GitHub code processing through AST to GraphDB, with LLM logic and SPARQL query layers, and a front-end interface for user interaction](Images/Intelligent_GraphRag_Integration_for_Enhanced_Guidance-Page-1.drawio.png)
 
+##How can we imagine it?
+```python
+# example.py
 
+def printfun():
+  """This function just prints a message."""
+  print("Hello from printfun!") # Built-in print
+
+def loop():
+  """This function loops 3 times and calls printfun."""
+  for i in range(3):
+     printfun() # Call to printfun
+
+def run_loops(num_times):
+  """Runs the loop function multiple times."""
+  print(f"Running the loop {num_times} times.") # Built-in print
+  for _ in range(num_times):
+      loop() # Call to loop
+  return f"Completed {num_times} loop runs."
+```
+
+Now, let's break down what goes where:
+
+**1. What's Exactly in the Knowledge Graph (KG)**
+
+The KG captures the *defined structure, components, and explicit connections* within the code. Think of it as the blueprint or map.
+
+*   **Nodes (Entities):** Represent the core components defined in the code.
+    *   **Node 1: `printfun`**
+        *   `id`: `example.py:printfun` (Unique Identifier)
+        *   `type`: Function
+        *   `name`: "printfun"
+        *   `file_path`: "example.py"
+        *   `signature`: `() -> None` (No parameters, returns None)
+        *   `docstring`: "This function just prints a message."
+        *   `LLM-summary` (Example): "Outputs a static greeting."
+    *   **Node 2: `loop`**
+        *   `id`: `example.py:loop`
+        *   `type`: Function
+        *   `name`: "loop"
+        *   `file_path`: "example.py"
+        *   `signature`: `() -> None`
+        *   `docstring`: "This function loops 3 times and calls printfun."
+        *   `LLM-summary` (Example): "Iterates three times, invoking 'printfun' in each iteration."
+    *   **Node 3: `run_loops`**
+        *   `id`: `example.py:run_loops`
+        *   `type`: Function
+        *   `name`: "run_loops"
+        *   `file_path`: "example.py"
+        *   `signature`: `(num_times: Any) -> str` (Takes one parameter, returns a string. Type `Any` if not inferred precisely).
+        *   `docstring`: "Runs the loop function multiple times."
+        *   `LLM-summary` (Example): "Executes the 'loop' function a specified number of times and returns a completion message."
+    *   *(Potentially)* **Node 4: `num_times` (Parameter)**
+        *   `id`: `example.py:run_loops:param:num_times`
+        *   `type`: Parameter
+        *   `name`: "num_times"
+        *   `belongs_to`: Node 3 (`run_loops`)
+        *   `param_type`: `Any` (or inferred type)
+
+*   **Edges (Relationships):** Represent the *connections* between the nodes.
+    *   **Edge 1: `CALLS`**
+        *   `Source`: Node 2 (`loop`)
+        *   `Target`: Node 1 (`printfun`)
+        *   `type`: CALLS
+        *   `location`: `example.py:loop:line_7` (Approximate line number)
+    *   **Edge 2: `CALLS`**
+        *   `Source`: Node 3 (`run_loops`)
+        *   `Target`: Node 2 (`loop`)
+        *   `type`: CALLS
+        *   `location`: `example.py:run_loops:line_13` (Approximate line number)
+    *   *(Potentially)* **Edge 3: `HAS_PARAMETER`**
+        *   `Source`: Node 3 (`run_loops`)
+        *   `Target`: Node 4 (`num_times`)
+        *   `type`: HAS_PARAMETER
+    *   *(Potentially)* **Edge 4: `RETURNS`**
+        *   `Source`: Node 3 (`run_loops`)
+        *   `Target`: (Literal or Node representing `str` type)
+        *   `type`: RETURNS
+
+**KG Summary:** The KG stores discrete facts: "Function `loop` exists," "Function `loop` calls function `printfun`," "Function `run_loops` takes a parameter," "Function `run_loops` returns a string." It's excellent for precise, structural queries like "What functions call `loop`?" or "What parameters does `run_loops` take?".
+
+---
+
+**2. What's Exactly in the Vector Store (VS)**
+
+The Vector Store captures the *semantic meaning* or *essence* of code blocks and their descriptions. Think of it as capturing the *vibe* or *purpose* for similarity matching.
+
+*   **Code Chunk Embeddings:** Vectors representing the *meaning* of the executable code within each function.
+    *   **Embedding 1 (`printfun` Code):** A vector generated from the code `print("Hello from printfun!")`. This vector numerically represents the concept of "printing a specific string".
+        *   `Associated Data`: `chunk_id: example.py:printfun`, raw code.
+    *   **Embedding 2 (`loop` Code):** A vector generated from `for i in range(3): printfun()`. This represents "looping a fixed number of times and calling another specific function (`printfun`)".
+        *   `Associated Data`: `chunk_id: example.py:loop`, raw code.
+    *   **Embedding 3 (`run_loops` Code):** A vector generated from the code inside `run_loops`: `print(f"Running the loop {num_times} times."); for _ in range(num_times): loop(); return f"Completed {num_times} loop runs."`. This represents "printing a dynamic message, looping based on a parameter, calling another specific function (`loop`), and returning a result string".
+        *   `Associated Data`: `chunk_id: example.py:run_loops`, raw code.
+
+*   **Entity Description Embeddings:** Vectors representing the *meaning* of the natural language descriptions (docstrings, summaries).
+    *   **Embedding 4 (`printfun` Description):** A vector generated from text like "This function just prints a message. Outputs a static greeting.". Represents the concept described.
+        *   `Associated Data`: `entity_id: example.py:printfun`.
+    *   **Embedding 5 (`loop` Description):** A vector generated from text like "This function loops 3 times and calls printfun. Iterates three times, invoking 'printfun' in each iteration.". Represents the described concept.
+        *   `Associated Data`: `entity_id: example.py:loop`.
+    *   **Embedding 6 (`run_loops` Description):** A vector generated from text like "Runs the loop function multiple times. Executes the 'loop' function a specified number of times and returns a completion message.". Represents the described concept.
+        *   `Associated Data`: `entity_id: example.py:run_loops`.
+
+**VS Summary:** The Vector Store contains numerical fingerprints (embeddings) that allow for semantic similarity searches. It doesn't know explicitly that `run_loops` calls `loop`, but the *embedding* for `run_loops`'s code will likely be somewhat similar to other code that involves looping and calling functions, and its *description embedding* will be similar to other descriptions about executing tasks multiple times. It's great for fuzzy or conceptual queries like "Find code that repeatedly executes a task" or "Show me functions related to printing status messages".
+
+---
+
+**How Retrieval Uses Both:**
+
+*   **Query:** "What calls the `loop` function?"
+    *   **Action:** Primarily a KG query. Find nodes with `CALLS` edges pointing *to* the `loop` node.
+    *   **Result:** The `run_loops` node.
+*   **Query:** "Find code examples for running something multiple times based on input."
+    *   **Action:** Embed the query. Primarily a VS search. Compare query embedding against Code Chunk Embeddings and potentially Description Embeddings.
+    *   **Result:** Embedding 3 (`run_loops` code) and Embedding 6 (`run_loops` description) would likely score high.
+*   **Query:** "Show me the function that runs `printfun` three times and how it's used."
+    *   **Action (Hybrid):**
+        1.  VS Search (optional): Find entities related to "`printfun` three times" -> might highlight `loop`.
+        2.  KG Query: Find the `loop` node. Find incoming `CALLS` edges to `loop` -> finds `run_loops`. Find outgoing `CALLS` edges from `loop` -> finds `printfun`.
+    *   **Result:** Identify `loop` as the direct function, `run_loops` as its caller, and `printfun` as what it calls, presenting the relevant code and connections.
 
 
 
