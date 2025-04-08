@@ -8,7 +8,8 @@ The recommended approach leverages a hybrid methodology combining LLM inference 
 
 ![Architecture diagram showing the system's workflow with GitHub code processing through AST to GraphDB, with LLM logic and SPARQL query layers, and a front-end interface for user interaction](Images/Intelligent_GraphRag_Integration_for_Enhanced_Guidance-Page-1.drawio.png)
 <details>
-  <summary>## How can we imagine it?</summary>
+  <summary> ## How can we imagine it? </summary>
+  
 ## How can we imagine it?
 ```python
 # example.py
