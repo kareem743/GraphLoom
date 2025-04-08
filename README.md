@@ -131,7 +131,9 @@ The Vector Store captures the *semantic meaning* or *essence* of code blocks and
 
 
 
-
+<details>
+  <summary>Click to expand</summary>
+  
 ## [How to Evaluate?](Evaluation)
 
 Here’s a summarized table of all evaluation metrics covering the overall project, the "text to Cypher" component, and the knowledge graph itself. This consolidates metrics from retrieval, generation, user studies, task-specific evaluation, text-to-Cypher translation, and knowledge graph quality.
