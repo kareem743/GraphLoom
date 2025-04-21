@@ -1,0 +1,1 @@
+tiktoken&gt;=0.5.1 tree-sitter-python&gt;=0.20.4 neo4j&gt;=5.23.0 chromadb&gt;=0.5.5 sentence-transformers&gt;=3.0.1 ollama&gt;=0.3.1
