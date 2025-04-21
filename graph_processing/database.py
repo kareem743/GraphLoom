@@ -72,7 +72,7 @@ def embed_and_store_entities(entities: List[Dict], embedding_function, vector_db
             text += f"Context: Inside {e.get('parent_type')} {e.get('parent_name')}\n"
         text += f"Description: {e.get('description', 'Not Available')}\n"
         texts_to_embed.append(text)
-        meta = {k: v for k in e.items() if k not in ['snippet', 'id']}
+        meta = {k: v for k,v in e.items() if k not in ['snippet', 'id']}
         valid_meta = {}
         for k, v in meta.items():
             if isinstance(v, (str, int, float, bool)) or v is None:
