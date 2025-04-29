@@ -1,0 +1,29 @@
+.sidenav-container {
+    height: calc(100% - 65px);
+
+  }
+  
+  .sidenav {
+    position: fixed;  /* Fixes the sidenav to the left side */
+               /* Sticks it to the top */
+    margin-top: 65px;
+    z-index: 9999;
+    height: 100vh;
+    width: 250px;
+    background: #ffffff;
+    padding-top: 20px;
+    border-radius: 0%;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .nav-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .nav-btn:hover {
+    background: #E0E7FF;
+  }
+  

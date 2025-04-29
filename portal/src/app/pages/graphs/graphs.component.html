@@ -1,0 +1,43 @@
+<div class="container mt-3 mx-1 px-5" style="max-width: 99999px !important;">
+  <div class="row d-flex justify-content-between mb-5">
+      <div class="col-6">
+          <h2 class="headerTitle">My Graphs</h2>
+      </div>
+      <div class="col-4 d-flex justify-content-end">
+          <button nz-button nzType="primary" (click)="createGraph()">Create Graph</button>
+      </div>
+  </div>
+
+  <div class="row tableHeader py-2">
+      <div class="col-3">
+          <h5 class="primaryText mb-0">Name</h5>
+      </div>
+      <div class="col-3">
+          <h5 class="primaryText mb-0">Created At</h5>
+      </div>
+      <div class="col-4">
+          <h5 class="primaryText mb-0">Github Repo Url</h5>
+      </div>
+  </div>
+
+  <div class="row tableBody p-0 mt-2">
+      @for (item of graphs; track item; let i = $index; let last = $last; let count = $count) {
+          <div class="row py-2 px-0 m-0 table-row" [ngClass]="{'table-row-bp': count > 1 && !last}">
+              <div class="col-3">
+                  <span class="primaryText mb-0">{{item.name}}</span>
+              </div>
+              <div class="col-3">
+                  <span class="primaryText mb-0">{{item.created_at}}</span>
+              </div>
+              <div class="col-5">
+                  <span class="primaryText mb-0">{{item.folder_path}}</span>
+              </div>
+              <div class="col-1 text-end pe-4">
+                  <a href="#" (click)="onSettingsClick(item.graph_id); $event.preventDefault()">
+                      <fa-icon [icon]="settingsIcon" class="primaryText"></fa-icon>
+                  </a>
+              </div>
+          </div>
+      }
+  </div>
+</div>
