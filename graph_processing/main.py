@@ -10,17 +10,40 @@ from llm_client import get_llm_client, get_fallback_llm
 from pipeline import parse_and_extract, deduplicate_entities, update_entity_descriptions, chunk_files
 from database import embed_and_store_chunks, embed_and_store_entities, populate_neo4j_graph, store_metadata
 from config import EMBEDDING_MODEL_NAME, CHUNK_TOKEN_LIMIT, CHROMA_PATH_PREFIX, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
+import git
+import shutil
 
-def main_processing_pipeline(input_file_paths: List[str], index_id: str = "python_struct_chunk_neo4j_v1", enable_llm_description: bool = False):
+def main_processing_pipeline(github_repo_url: str, index_id: str = "python_struct_chunk_neo4j_v1", enable_llm_description: bool = False):
     logging.info(f"===== Starting PYTHON Structure-Chunk Pipeline (Neo4j/Chroma Target): {index_id} =====")
     start_time = datetime.now()
     kv_store = {}
 
-    python_files = [p for p in input_file_paths if os.path.isfile(p) and p.lower().endswith(".py")]
-    if not python_files:
-        logging.error("No valid .py files found in the input paths.")
+    # Create a unique local folder for the repository
+    repo_dir = os.path.join("repos", index_id)
+    try:
+        os.makedirs(repo_dir, exist_ok=True)
+        logging.info(f"Cloning repository {github_repo_url} to {repo_dir}")
+        git.Repo.clone_from(github_repo_url, repo_dir)
+        logging.info("Repository cloned successfully.")
+    except Exception as e:
+        logging.critical(f"Failed to clone repository {github_repo_url}: {e}", exc_info=True)
         return
-    logging.info(f"Found {len(python_files)} Python files to process.")
+
+    # Traverse the repository to find all .py files
+    python_files = []
+    try:
+        for root, _, files in os.walk(repo_dir):
+            for file in files:
+                if file.lower().endswith(".py"):
+                    file_path = os.path.join(root, file)
+                    python_files.append(file_path)
+        if not python_files:
+            logging.error("No valid .py files found in the repository.")
+            return
+        logging.info(f"Found {len(python_files)} Python files to process: {python_files}")
+    except Exception as e:
+        logging.critical(f"Failed to traverse repository: {e}", exc_info=True)
+        return
 
     code_parser = CodeParser()
     if not code_parser.is_parser_loaded():
@@ -81,59 +104,22 @@ def main_processing_pipeline(input_file_paths: List[str], index_id: str = "pytho
         if neo4j_driver:
             logging.info("Closing Neo4j connection.")
             neo4j_driver.close()
+        # Clean up the cloned repository
+        try:
+            shutil.rmtree(repo_dir)
+            logging.info(f"Cleaned up cloned repository at {repo_dir}")
+        except Exception as e:
+            logging.warning(f"Failed to clean up repository at {repo_dir}: {e}")
 
     end_time = datetime.now()
     logging.info(f"===== Pipeline Complete: {index_id} =====")
     logging.info(f"Total execution time: {end_time - start_time}")
 
 if __name__ == "__main__":
-    if not os.path.exists("temp_code"): os.makedirs("temp_code")
-    with open("temp_code/processor.py", "w", encoding='utf-8') as f:
-        f.write("""
-def load_data(file_path):
-    with open(file_path, 'r') as file:
-        return file.readlines()
-
-def clean_data(data):
-    return [line.strip() for line in data if line.strip()]
-
-def tokenize_line(line):
-    return line.split()
-
-def tokenize_data(data):
-    return [tokenize_line(line) for line in data]
-
-def flatten(nested_list):
-    if not nested_list:
-        return []
-    if isinstance(nested_list[0], list):
-        return flatten(nested_list[0]) + flatten(nested_list[1:])
-    return [nested_list[0]] + flatten(nested_list[1:])
-
-def count_tokens(flat_tokens):
-    return len(flat_tokens)
-
-class FileProcessor:
-    def __init__(self, path):
-        self.path = path
-
-    def process(self):
-        raw = load_data(self.path)
-        cleaned = clean_data(raw)
-        tokenized = tokenize_data(cleaned)
-        flat = flatten(tokenized)
-        return count_tokens(flat)
-
-def run_pipeline(file_path):
-    processor = FileProcessor(file_path)
-    return processor.process()
-
-
-""")
-
-    input_files = ["temp_code/processor.py"]
+    # Example GitHub repository URL
+    github_url = "https://github.com/example/repo.git"
     index_name = "py_structchunk_neo4j_v2_option2"
     USE_LLM_DESCRIPTIONS = True
     if NEO4J_PASSWORD == "abcd12345":
         logging.warning("Using default Neo4j password. Set the NEO4J_PASSWORD environment variable for security.")
-    main_processing_pipeline(input_files, index_id=index_name, enable_llm_description=USE_LLM_DESCRIPTIONS)
+    main_processing_pipeline(github_url, index_id=index_name, enable_llm_description=USE_LLM_DESCRIPTIONS)

@@ -23,7 +23,7 @@ Description: Placeholder description (Claude unavailable)."""
 
 def get_llm_client():
     """Returns a Claude API client configured for code understanding tasks."""
-    api_key = "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"
+    api_key = "ANTHROPIC_API_KEY"  # Replace with your actual API key or environment variable
     if not api_key:
         logging.error("Claude API key not found in ANTHROPIC_API_KEY environment variable.")
         print("Falling back to placeholder LLM.")

@@ -1,0 +1,19 @@
+{
+  "graph_3b9950c8-f541-4b93-b731-b9216dc1a255": {
+    "index_id": "graph_3b9950c8-f541-4b93-b731-b9216dc1a255",
+    "timestamp": "2025-04-25T23:49:16.709847",
+    "processed_files": [
+      "repos\\graph_3b9950c8-f541-4b93-b731-b9216dc1a255\\sort.py"
+    ],
+    "entity_vector_collection": "graph_3b9950c8-f541-4b93-b731-b9216dc1a255_entities",
+    "chunk_vector_collection": "graph_3b9950c8-f541-4b93-b731-b9216dc1a255_chunks",
+    "chunking_strategy": "structure-aware",
+    "token_limit_per_chunk": 450,
+    "embedding_model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+    "neo4j_populated": true,
+    "neo4j_uri": "neo4j://localhost:7687",
+    "num_unique_entities_processed": 36,
+    "num_text_chunks_processed": 3,
+    "language_processed": "python"
+  }
+}

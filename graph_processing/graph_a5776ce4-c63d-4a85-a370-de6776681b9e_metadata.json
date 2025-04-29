@@ -1,0 +1,19 @@
+{
+  "graph_a5776ce4-c63d-4a85-a370-de6776681b9e": {
+    "index_id": "graph_a5776ce4-c63d-4a85-a370-de6776681b9e",
+    "timestamp": "2025-04-25T21:58:51.110829",
+    "processed_files": [
+      "C:\\Users\\User\\Desktop\\study\\GP\\GraphLoom\\example.py"
+    ],
+    "entity_vector_collection": "graph_a5776ce4-c63d-4a85-a370-de6776681b9e_entities",
+    "chunk_vector_collection": "graph_a5776ce4-c63d-4a85-a370-de6776681b9e_chunks",
+    "chunking_strategy": "structure-aware",
+    "token_limit_per_chunk": 450,
+    "embedding_model": "sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+    "neo4j_populated": true,
+    "neo4j_uri": "neo4j://localhost:7687",
+    "num_unique_entities_processed": 7,
+    "num_text_chunks_processed": 7,
+    "language_processed": "python"
+  }
+}
