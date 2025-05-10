@@ -1,0 +1,29 @@
+{
+  "py_structchunk_neo4j_v2_option2": {
+    "index_id": "py_structchunk_neo4j_v2_option2",
+    "timestamp": "2025-05-10T18:10:50.309189",
+    "processed_files": [
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\api.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\chunking.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\code_parser.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\config.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\database.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\evaluate_retrieval.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\llm_client.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\main.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\pipeline.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\graph_processing\\retrive.py",
+      "repos\\py_structchunk_neo4j_v2_option2\\temp_code\\processor.py"
+    ],
+    "entity_vector_collection": "py_structchunk_neo4j_v2_option2_entities",
+    "chunk_vector_collection": "py_structchunk_neo4j_v2_option2_chunks",
+    "chunking_strategy": "structure-aware",
+    "token_limit_per_chunk": 1550,
+    "embedding_model": "nomic-ai/CodeRankEmbed",
+    "neo4j_populated": true,
+    "neo4j_uri": "neo4j://localhost:7687",
+    "num_unique_entities_processed": 1311,
+    "num_text_chunks_processed": 41,
+    "language_processed": "python"
+  }
+}
