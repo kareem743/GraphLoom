@@ -24,11 +24,14 @@
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@popperjs/core": "^2.11.8",
+    "@types/vis": "^4.21.27",
     "bootstrap": "^5.3.3",
     "devextreme-schematics": "^1.9.0",
     "ng-zorro-antd": "^19.1.0",
+    "ngx-vis": "^4.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "vis-network": "^9.1.10",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {

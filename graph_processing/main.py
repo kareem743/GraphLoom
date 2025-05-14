@@ -98,7 +98,7 @@ def main_processing_pipeline(github_repo_url: str, index_id: str = "python_struc
         text_chunks = chunk_files(python_files, code_parser, CHUNK_TOKEN_LIMIT)
         embed_and_store_chunks(text_chunks, ef, chroma_client, f"{index_id}_chunks")
         embed_and_store_entities(unique_entities, ef, chroma_client, f"{index_id}_entities")
-        populate_neo4j_graph(neo4j_driver, unique_entities, all_extracted_entities, python_files)
+        populate_neo4j_graph(neo4j_driver, unique_entities, all_extracted_entities, python_files, index_id)
         store_metadata(kv_store, index_id, python_files, len(unique_entities), len(text_chunks))
     except Exception as e:
         logging.critical(f"Pipeline execution failed: {e}", exc_info=True)
@@ -120,7 +120,7 @@ def main_processing_pipeline(github_repo_url: str, index_id: str = "python_struc
 if __name__ == "__main__":
     # Example GitHub repository URL
     github_url = "https://github.com/kareem743/GraphLoom.git"
-    index_name = "py_structchunk_neo4j_v2_option2"
+    index_name = "py_structchunk_neo4j_v2_option2_11"
     USE_LLM_DESCRIPTIONS = False
     if NEO4J_PASSWORD == "abcd12345":
         logging.warning("Using default Neo4j password. Set the NEO4J_PASSWORD environment variable for security.")

@@ -8,8 +8,9 @@ import logging
 import chromadb
 from neo4j import GraphDatabase
 from chromadb.utils import embedding_functions
+from llm_client import get_fallback_llm, get_llm_client
 from main import main_processing_pipeline
-from retrive import retrieve_context, generate_response, LLM_CLIENT
+from retrive import analyze_change_impact, analyze_code_patterns, classify_query_intent, identify_change_points, retrieve_context, generate_response, LLM_CLIENT
 from config import EMBEDDING_MODEL_NAME, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, CHROMA_PATH_PREFIX
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -92,7 +93,7 @@ async def create_graph(request: CreateGraphRequest):
     
     # Run pipeline
     try:
-        main_processing_pipeline(request.folder_path, index_id=index_id, enable_llm_description=True)
+        main_processing_pipeline(request.folder_path, index_id=index_id, enable_llm_description=False)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to create graph: {str(e)}")
     
@@ -177,6 +178,14 @@ async def start_chat(request: NewChatRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to initialize ChromaDB: {str(e)}")
     
+    try:
+        LLM_CLIENT = get_llm_client()
+        logging.info("Successfully initialized LLM client.")
+    except Exception as e:
+        logging.warning(f"Failed to initialize LLM client: {e}. Using fallback LLM.")
+        LLM_CLIENT = get_fallback_llm()
+
+    query_intent = classify_query_intent(request.query, LLM_CLIENT)
     # Retrieve context and generate response
     try:
         context = retrieve_context(
@@ -185,11 +194,28 @@ async def start_chat(request: NewChatRequest):
             chroma_client=chroma_client,
             neo4j_driver=neo4j_driver,
             embedding_function=ef,
-            top_k_entities=7,
-            top_k_chunks=3,
+            llm_client=LLM_CLIENT,
+            query_intent=query_intent,
+            top_k_entities=15,
+            top_k_chunks=5,
             graph_hops=3
         )
-        response = generate_response(request.query, context, LLM_CLIENT)
+        
+        if query_intent in ["change_request", "function_request"]:
+            code_patterns = analyze_code_patterns(context["relevant_chunks"], neo4j_driver)
+            context["code_patterns"] = code_patterns
+            change_points = identify_change_points(request.query, context, neo4j_driver)
+            context["change_points"] = change_points
+            impact_analysis = analyze_change_impact(change_points, neo4j_driver)
+            context["impact_analysis"] = impact_analysis
+
+            response = generate_response(
+                query=request.query,
+                retrieved_context=context,
+                llm_client=LLM_CLIENT,
+                query_intent=query_intent
+            )
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate response: {str(e)}")
     
@@ -242,19 +268,44 @@ async def send_message(request: QueryRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to initialize ChromaDB: {str(e)}")
     
+    try:
+        LLM_CLIENT = get_llm_client()
+        logging.info("Successfully initialized LLM client.")
+    except Exception as e:
+        logging.warning(f"Failed to initialize LLM client: {e}. Using fallback LLM.")
+        LLM_CLIENT = get_fallback_llm()
+    
     # Retrieve context and generate response
     try:
+        query_intent = classify_query_intent(request.query, LLM_CLIENT)        
         context = retrieve_context(
             query=request.query,
             index_id=conversation["graph_id"],
             chroma_client=chroma_client,
             neo4j_driver=neo4j_driver,
             embedding_function=ef,
-            top_k_entities=7,
-            top_k_chunks=3,
+            llm_client=LLM_CLIENT,
+            query_intent=query_intent,
+            top_k_entities=15,
+            top_k_chunks=5,
             graph_hops=3
         )
-        response = generate_response(request.query, context, LLM_CLIENT)
+
+        if query_intent in ["change_request", "function_request"]:
+            code_patterns = analyze_code_patterns(context["relevant_chunks"], neo4j_driver)
+            context["code_patterns"] = code_patterns
+            change_points = identify_change_points(request.query, context, neo4j_driver)
+            context["change_points"] = change_points
+            impact_analysis = analyze_change_impact(change_points, neo4j_driver)
+            context["impact_analysis"] = impact_analysis
+
+        response = generate_response(
+            query=request.query,
+            retrieved_context=context,
+            llm_client=LLM_CLIENT,
+            query_intent=query_intent
+        )
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate response: {str(e)}")
     
@@ -296,6 +347,63 @@ async def get_conversation_history(conversation_id: str):
     
     sorted_history = sorted(history, key=lambda x: x.get("timestamp", datetime.min))
     return {"history": sorted_history}
+
+class GraphVisualizationResponse(BaseModel):
+    nodes: List[Dict]
+    edges: List[Dict]
+
+@app.get("/graphs/{graph_id}/visualization", response_model=GraphVisualizationResponse)
+async def get_graph_visualization(user_id: str, graph_id: str):
+    # Validate graph access
+    graphs = read_json(GRAPHS_FILE)
+    graph = next((g for g in graphs if g["graph_id"] == graph_id and g["user_id"] == user_id), None)
+    if not graph:
+        raise HTTPException(status_code=404, detail="Graph not found or user does not have access")
+    
+    if not neo4j_driver:
+        raise HTTPException(status_code=500, detail="Neo4j service not initialized")
+    
+    # Fetch nodes and edges from Neo4j
+    try:
+        with neo4j_driver.session(database="neo4j") as session:
+            # Fetch nodes
+            node_query = """
+            MATCH (n:KGNode)
+            WHERE n.graph_id = $graph_id
+            RETURN n.id AS id, n.entity_type AS label, n.name AS name, n.source_file AS source_file, n.description AS description
+            LIMIT 500
+            """
+            node_result = session.run(node_query, graph_id=graph_id)
+            nodes = [
+                {
+                    "id": record["id"],
+                    "label": f"{record['name']}\n({record['label']})",
+                    "title": f"Type: {record['label']}\nName: {record['name']}\nFile: {record['source_file'] or 'N/A'}\nDescription: {record['description'] or 'N/A'}"
+                }
+                for record in node_result
+            ]
+            
+            # Fetch edges
+            edge_query = """
+            MATCH (n:KGNode)-[r]->(m:KGNode)
+            WHERE n.graph_id = $graph_id AND m.graph_id = $graph_id
+            RETURN n.id AS from, m.id AS to, type(r) AS type
+            LIMIT 500
+            """
+            edge_result = session.run(edge_query, graph_id=graph_id)
+            edges = [
+                {
+                    "from": record["from"],
+                    "to": record["to"],
+                    "label": record["type"],
+                    "title": f"Relationship: {record['type']}"
+                }
+                for record in edge_result
+            ]
+        
+        return {"nodes": nodes, "edges": edges}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch graph visualization data: {str(e)}")
 
 @app.get("/")
 def root():

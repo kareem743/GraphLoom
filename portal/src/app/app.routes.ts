@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AssistantComponent } from './pages/assistant/assistant.component';
 import { GraphsComponent } from './pages/graphs/graphs.component';
 import { GraphDetailsComponent } from './pages/graph-details/graph-details.component';
+import { GraphVisualizationComponent } from './pages/visualization/visualization.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent }, 
@@ -11,6 +12,7 @@ export const routes: Routes = [
     { path: 'graphs', component: GraphsComponent },
     { path: 'graphs/details', component: GraphDetailsComponent },
     { path: 'graphs/details/:id', component: GraphDetailsComponent }, 
+    { path: 'visualization', component: GraphVisualizationComponent }, 
     { path: '**', redirectTo: 'home' } 
   ];
 

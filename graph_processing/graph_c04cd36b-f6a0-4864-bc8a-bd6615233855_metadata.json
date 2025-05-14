@@ -1,0 +1,30 @@
+{
+  "graph_c04cd36b-f6a0-4864-bc8a-bd6615233855": {
+    "index_id": "graph_c04cd36b-f6a0-4864-bc8a-bd6615233855",
+    "timestamp": "2025-05-13T23:12:35.519857",
+    "processed_files": [
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\api.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\chunking.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\code_parser.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\config.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\database.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\evaluate.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\evaluate_retrieval.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\llm_client.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\main.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\pipeline.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\graph_processing\\retrive.py",
+      "repos\\graph_c04cd36b-f6a0-4864-bc8a-bd6615233855\\temp_code\\processor.py"
+    ],
+    "entity_vector_collection": "graph_c04cd36b-f6a0-4864-bc8a-bd6615233855_entities",
+    "chunk_vector_collection": "graph_c04cd36b-f6a0-4864-bc8a-bd6615233855_chunks",
+    "chunking_strategy": "structure-aware",
+    "token_limit_per_chunk": 1550,
+    "embedding_model": "nomic-ai/CodeRankEmbed",
+    "neo4j_populated": true,
+    "neo4j_uri": "neo4j://localhost:7687",
+    "num_unique_entities_processed": 1801,
+    "num_text_chunks_processed": 55,
+    "language_processed": "python"
+  }
+}

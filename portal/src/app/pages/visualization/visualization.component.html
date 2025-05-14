@@ -1,0 +1,22 @@
+<div class="container">
+    <h2 class="headerTitle">Graph Visualization</h2>
+    <div class="graph-selector">
+        <nz-select 
+        [(ngModel)]="selectedGraphId" 
+        nzPlaceHolder="Select a Graph" 
+        class="w-50" 
+        (ngModelChange)="onGraphSelect()">
+        <nz-option 
+            *ngFor="let graph of graphs; trackBy: trackById" 
+            [nzValue]="graph.graph_id" 
+            [nzLabel]="graph.name">
+        </nz-option>
+    </nz-select>
+
+      <!-- <label for="graphSelect">Select Graph:</label>
+      <select id="graphSelect" [(ngModel)]="selectedGraphId" (change)="onGraphSelect()">
+        <option *ngFor="let graph of graphs" [value]="graph.graph_id">{{ graph.name }}</option>
+      </select> -->
+    </div>
+    <div #network class="network-container"></div>
+  </div>

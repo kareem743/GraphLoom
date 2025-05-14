@@ -119,7 +119,7 @@ def _run_write_query(tx, query, **params):
             logging.error(f"  Params: (Could not serialize params)")
         raise
 
-def add_neo4j_node(tx, node_data: Dict):
+def add_neo4j_node(tx, node_data: Dict, graph_id: str):
     node_id = node_data.get('id')
     node_type = node_data.get('entity_type', 'UnknownEntity')
     if not node_id:
@@ -130,7 +130,7 @@ def add_neo4j_node(tx, node_data: Dict):
     if not safe_node_type or not safe_node_type[0].isupper():
         safe_node_type = f"Type_{safe_node_type}" if safe_node_type else "UnknownEntity"
 
-    props_to_set = {}
+    props_to_set = {'graph_id': graph_id}  # Add graph_id
     for k, v in node_data.items():
         if k not in ['id', 'snippet'] and v is not None:
             if isinstance(v, (list, dict)):
@@ -153,11 +153,11 @@ def add_neo4j_node(tx, node_data: Dict):
     params = {'id': node_id, 'props': props_to_set, 'node_type_label': safe_node_type}
     try:
         _run_write_query(tx, query, **params)
-        logging.debug(f"Successfully added/merged Neo4j node: {node_id} (Type: {safe_node_type})")
+        logging.debug(f"Successfully added/merged Neo4j node: {node_id} (Type: {safe_node_type}, Graph: {graph_id})")
     except Exception as e:
         logging.error(f"Failed to write Neo4j node for ID: {node_id}")
 
-def add_neo4j_potential_function_node(tx, name: str, is_builtin: bool = False):
+def add_neo4j_potential_function_node(tx, name: str, is_builtin: bool = False, graph_id: str = None):
     if not name or not isinstance(name, str): return None
     node_name = name
     safe_name_for_id = "".join(c if c.isalnum() or c in ['_', '.', '-'] else '_' for c in name)
@@ -169,12 +169,12 @@ def add_neo4j_potential_function_node(tx, name: str, is_builtin: bool = False):
     if is_builtin:
         entity_type = 'BuiltinFunction'
         node_id = f"BuiltinFunction:{safe_name_for_id}"
-        props = {'id': node_id, 'name': node_name, 'entity_type': entity_type, 'origin': 'builtin'}
+        props = {'id': node_id, 'name': node_name, 'entity_type': entity_type, 'origin': 'builtin', 'graph_id': graph_id}
         node_type_label = 'BuiltinFunction'
     else:
         entity_type = 'PotentialFunction'
         node_id = f"PotentialFunction:{safe_name_for_id}"
-        props = {'id': node_id, 'name': node_name, 'entity_type': entity_type}
+        props = {'id': node_id, 'name': node_name, 'entity_type': entity_type, 'graph_id': graph_id}
         node_type_label = 'PotentialFunction'
 
     query = """
@@ -188,7 +188,7 @@ def add_neo4j_potential_function_node(tx, name: str, is_builtin: bool = False):
     params = {'id': node_id, 'props': props, 'node_type_label': node_type_label}
     try:
         _run_write_query(tx, query, **params)
-        logging.debug(f"Added/updated placeholder node: {node_id} (Type: {node_type_label})")
+        logging.debug(f"Added/updated placeholder node: {node_id} (Type: {node_type_label}, Graph: {graph_id})")
         return node_id
     except Exception as e:
         logging.error(f"Failed to write Neo4j placeholder node for: {name} (ID: {node_id})")
@@ -230,7 +230,7 @@ def add_neo4j_edge(tx, source_id: str, target_id: str, rel_type: str, rel_props:
     except Exception as e:
         logging.error(f"Failed to write Neo4j edge: ({source_id})-[{safe_rel_type}]->({target_id})")
 
-def populate_neo4j_graph(driver: Driver, unique_entities: List[Dict], all_extracted_entities: List[Dict], file_paths: List[str]):
+def populate_neo4j_graph(driver: Driver, unique_entities: List[Dict], all_extracted_entities: List[Dict], file_paths: List[str], graph_id: str):
     logging.info("--- 7. Populating Neo4j Knowledge Graph ---")
     # Build maps for quick lookup
     entity_map_by_id = {e['id']: e for e in unique_entities if 'id' in e}
@@ -388,7 +388,7 @@ def populate_neo4j_graph(driver: Driver, unique_entities: List[Dict], all_extrac
             for i in range(0, len(nodes_to_write_batch), batch_size):
                 batch = nodes_to_write_batch[i:min(i + batch_size, len(nodes_to_write_batch))]
                 try:
-                    session.execute_write(lambda tx: [add_neo4j_node(tx, node_data) for node_data in batch])
+                    session.execute_write(lambda tx: [add_neo4j_node(tx, node_data, graph_id) for node_data in batch])
                     logging.debug(f"    Wrote node batch {i//batch_size + 1}...")
                 except Exception as batch_e:
                      # Error already logged in helper, just note batch failure
@@ -401,7 +401,7 @@ def populate_neo4j_graph(driver: Driver, unique_entities: List[Dict], all_extrac
                  batch = potential_funcs_list[i:min(i + batch_size, len(potential_funcs_list))]
                  try:
                      # Pass is_builtin flag to the creation function
-                     session.execute_write(lambda tx: [add_neo4j_potential_function_node(tx, func_name, is_builtin) for func_name, is_builtin in batch])
+                     session.execute_write(lambda tx: [add_neo4j_potential_function_node(tx, func_name, is_builtin, graph_id) for func_name, is_builtin in batch])
                      logging.debug(f"    Wrote potential/builtin function batch {i//batch_size + 1}...")
                  except Exception as batch_e:
                      logging.error(f"    Error writing potential/builtin function batch starting at index {i}.")

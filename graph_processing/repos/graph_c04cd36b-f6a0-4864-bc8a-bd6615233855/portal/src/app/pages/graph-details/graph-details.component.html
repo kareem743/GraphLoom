@@ -1,0 +1,49 @@
+<div class="container mt-3 mx-1 px-5" style="max-width: 99999px !important;">
+  <nz-spin [nzSpinning]="isLoading">
+  <div class="row d-flex justify-content-between mb-4">
+    <div class="col-6">
+      <h2 class="headerTitle">{{ pageTitle }}</h2>
+    </div>
+    <div class="col-6 d-flex justify-content-end">
+      <button *ngIf="action === viewAction" nz-button nzType="default" nzDanger (click)="onDelete()">Delete</button>
+    </div>
+  </div>
+
+  <div class="col-12">
+    <form nz-form [nzLayout]="'vertical'" [formGroup]="graphForm">
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="24" nzFor="name" class="fw-bold">Graph Name</nz-form-label>
+        <nz-form-control [nzSpan]="6">
+          <input nz-input name="name" id="name" placeholder="Enter Graph Name" formControlName="name" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf="action != addAction">
+        <nz-form-label [nzSpan]="24" nzFor="createdAt" class="fw-bold">Created At</nz-form-label>
+        <nz-form-control [nzSpan]="6">
+          <input nz-input name="createdAt" id="createdAt" formControlName="created_at" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired [nzSpan]="24" nzFor="directory" class="fw-bold">Github Repo Url</nz-form-label>
+        <nz-form-control [nzSpan]="6">
+          <input nz-input name="directory" id="directory" placeholder="Select Github Repo" formControlName="folder_path" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item *ngIf="action === addAction">
+        <nz-form-control [nzSpan]="6">
+          <button 
+            nz-button 
+            nzType="primary" 
+            [disabled]="!graphForm.valid" 
+            (click)="onCreate()">
+            Create
+          </button>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </div>
+</nz-spin>
+</div>
