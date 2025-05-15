@@ -16,7 +16,7 @@ from neo4j import GraphDatabase, Driver
 # --- Project-Specific Imports ---
 from config import EMBEDDING_MODEL_NAME, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD
 from llm_client import get_llm_client, get_fallback_llm
-from evaluate_retrieval import evaluate_retrieval, evaluate_generated_answer
+from evaluate_retrieval import evaluate_retrieval, evaluate_generated_answer, export_evaluations_to_html
 
 # --- Configuration ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -1254,7 +1254,17 @@ if __name__ == "__main__":
                     llm_client=LLM_CLIENT,
                     retrieved_context=retrieved_data
                 )
-                
+
+                export_evaluations_to_html(
+                    query=USER_QUERY,
+                    retrieved_context=retrieved_data,
+                    generated_answer=final_answer,
+                    rag_answer=final_answer,  # Using the same answer for both fields
+                    llm_only_answer=None,  # You could generate a non-RAG answer if needed
+                    llm_client=LLM_CLIENT,
+                    ground_truth=None,  # Add ground truth if available
+                    output_file=f"evaluation_{TARGET_INDEX_ID}_{query_intent}_{int(time.time())}.html"
+                )
                 print("\n===== Final Answer =====")
                 print(final_answer)
                 
