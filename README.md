@@ -1,4 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphLoom Banner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        .banner {
+            width: 100%;
+            height: 500px;
+            background: radial-gradient(ellipse at center, #1a1a2e 0%, #0f0f23 70%, #000 100%);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .neural-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(64, 224, 208, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(0, 191, 255, 0.02) 0%, transparent 50%);
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(64, 224, 208, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(64, 224, 208, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: gridPulse 4s ease-in-out infinite;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+        }
+
+        .graph-network {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .node {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #00ffff 0%, #0080ff 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px rgba(0, 255, 255, 0.8),
+                0 0 20px rgba(0, 255, 255, 0.4),
+                0 0 30px rgba(0, 255, 255, 0.2);
+            animation: nodePulse 3s infinite ease-in-out;
+        }
+
+        .node-large {
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ff0080 0%, #8000ff 100%);
+            box-shadow: 
+                0 0 15px rgba(255, 0, 128, 0.8),
+                0 0 25px rgba(255, 0, 128, 0.4),
+                0 0 35px rgba(255, 0, 128, 0.2);
+        }
+
+        .node:nth-child(1) { top: 15%; left: 12%; animation-delay: 0s; }
+        .node:nth-child(2) { top: 25%; left: 88%; animation-delay: 0.5s; }
+        .node:nth-child(3) { top: 75%; left: 8%; animation-delay: 1s; }
+        .node:nth-child(4) { top: 85%; left: 92%; animation-delay: 1.5s; }
+        .node:nth-child(5) { top: 45%; left: 5%; animation-delay: 0.25s; }
+        .node:nth-child(6) { top: 35%; left: 95%; animation-delay: 0.75s; }
+        .node:nth-child(7) { top: 60%; left: 15%; animation-delay: 2s; }
+        .node:nth-child(8) { top: 20%; left: 70%; animation-delay: 2.5s; }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                rgba(0, 255, 255, 0.6) 0%, 
+                rgba(255, 0, 128, 0.4) 50%, 
+                rgba(0, 255, 255, 0.6) 100%);
+            transform-origin: left center;
+            border-radius: 1px;
+            box-shadow: 0 0 8px rgba(0, 255, 255, 0.3);
+            animation: connectionFlow 4s infinite ease-in-out;
+        }
+
+        .connection:nth-child(9) {
+            top: 20%;
+            left: 12%;
+            width: 76%;
+            transform: rotate(8deg);
+            animation-delay: 0s;
+        }
+
+        .connection:nth-child(10) {
+            top: 80%;
+            left: 8%;
+            width: 84%;
+            transform: rotate(-5deg);
+            animation-delay: 1s;
+        }
+
+        .connection:nth-child(11) {
+            top: 50%;
+            left: 5%;
+            width: 25%;
+            transform: rotate(45deg);
+            animation-delay: 2s;
+        }
+
+        .connection:nth-child(12) {
+            top: 25%;
+            left: 70%;
+            width: 22%;
+            transform: rotate(-30deg);
+            animation-delay: 1.5s;
+        }
+
+        @keyframes nodePulse {
+            0%, 100% { 
+                transform: scale(1); 
+                opacity: 0.8; 
+            }
+            50% { 
+                transform: scale(1.8); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes connectionFlow {
+            0%, 100% { 
+                opacity: 0.6; 
+                transform: scaleX(1); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scaleX(1.1); 
+            }
+        }
+
+        .content {
+            text-align: center;
+            z-index: 20;
+            color: #ffffff;
+            max-width: 900px;
+            padding: 0 30px;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 4.5rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, 
+                #00ffff 0%, 
+                #ff0080 25%, 
+                #8000ff 50%, 
+                #00ff80 75%, 
+                #0080ff 100%);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: logoGradient 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+            filter: drop-shadow(0 0 10px rgba(255, 0, 128, 0.2));
+        }
+
+        @keyframes logoGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            font-weight: 400;
+            color: #b0b0b0;
+            letter-spacing: 0.5px;
+            position: relative;
+        }
+
+        .tagline::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            border-radius: 1px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 35px;
+            font-weight: 300;
+            color: #d0d0d0;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .highlight {
+            color: #00ffff;
+            font-weight: 500;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .tech-item {
+            background: rgba(0, 255, 255, 0.08);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tech-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .tech-item:hover {
+            background: rgba(0, 255, 255, 0.15);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 10px 25px rgba(0, 255, 255, 0.2),
+                0 0 20px rgba(0, 255, 255, 0.1);
+            border-color: rgba(0, 255, 255, 0.4);
+        }
+
+        .tech-item:hover::before {
+            left: 100%;
+        }
+
+        .university {
+            margin-top: 30px;
+            font-size: 1rem;
+            color: #808080;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .floating-code {
+            position: absolute;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 11px;
+            color: rgba(0, 255, 255, 0.4);
+            background: rgba(0, 20, 40, 0.6);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            animation: codeFloat 8s infinite ease-in-out;
+        }
+
+        .code-1 {
+            top: 8%;
+            right: 8%;
+            animation-delay: 0s;
+        }
+
+        .code-2 {
+            bottom: 10%;
+            left: 5%;
+            animation-delay: 3s;
+        }
+
+        .code-3 {
+            top: 40%;
+            right: 3%;
+            animation-delay: 6s;
+        }
+
+        @keyframes codeFloat {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotate(0deg); 
+                opacity: 0.4; 
+            }
+            50% { 
+                transform: translateY(-15px) translateX(5px) rotate(1deg); 
+                opacity: 0.7; 
+            }
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 6s infinite linear;
+        }
+
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 8s; }
+        .particle:nth-child(2) { left: 20%; animation-delay: 1s; animation-duration: 7s; }
+        .particle:nth-child(3) { left: 30%; animation-delay: 2s; animation-duration: 9s; }
+        .particle:nth-child(4) { left: 40%; animation-delay: 3s; animation-duration: 6s; }
+        .particle:nth-child(5) { left: 50%; animation-delay: 1.5s; animation-duration: 8s; }
+        .particle:nth-child(6) { left: 60%; animation-delay: 2.5s; animation-duration: 7s; }
+        .particle:nth-child(7) { left: 70%; animation-delay: 0.5s; animation-duration: 9s; }
+        .particle:nth-child(8) { left: 80%; animation-delay: 4s; animation-duration: 6s; }
+        .particle:nth-child(9) { left: 90%; animation-delay: 3.5s; animation-duration: 8s; }
+
+        @keyframes particleFloat {
+            0% { 
+                transform: translateY(500px) translateX(0px); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; 
+            }
+            90% { 
+                opacity: 1; 
+            }
+            100% { 
+                transform: translateY(-50px) translateX(20px); 
+                opacity: 0; 
+            }
+        }
+
+        @media (max-width: 768px) {
+            .banner { height: 400px; }
+            .logo { font-size: 3rem; }
+            .tagline { font-size: 1.2rem; }
+            .description { font-size: 1rem; padding: 0 20px; }
+            .tech-stack { gap: 10px; }
+            .tech-item { padding: 8px 16px; font-size: 0.85rem; }
+            .floating-code { font-size: 9px; padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <div class="neural-bg"></div>
+        <div class="grid-overlay"></div>
+        
+        <div class="particles">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <div class="graph-network">
+            <div class="node"></div>
+            <div class="node node-large"></div>
+            <div class="node"></div>
+            <div class="node node-large"></div>
+            <div class="node"></div>
+            <div class="node"></div>
+            <div class="node node-large"></div>
+            <div class="node"></div>
+            <div class="connection"></div>
+            <div class="connection"></div>
+            <div class="connection"></div>
+            <div class="connection"></div>
+        </div>
+
+        <div class="floating-elements">
+            <div class="floating-code code-1">
+                def analyze_codebase():<br>
+                &nbsp;&nbsp;graph = build_kg(repo)<br>
+                &nbsp;&nbsp;return rag_query(graph)
+            </div>
+
+            <div class="floating-code code-2">
+                // Hybrid RAG Architecture<br>
+                const context = {<br>
+                &nbsp;&nbsp;chunks: getCodeChunks(),<br>
+                &nbsp;&nbsp;graph: getKnowledgeGraph()<br>
+                }
+            </div>
+
+            <div class="floating-code code-3">
+                query = """<br>
+                MATCH (f:Function)-[r:CALLS]->(d:Dependency)<br>
+                RETURN f.name, d.module<br>
+                """
+            </div>
+        </div>
+
+        <div class="content">
+            <h1 class="logo">GraphLoom</h1>
+            <p class="tagline">A Graph RAG Solution for Code Understanding</p>
+            <p class="description">
+                GraphLoom uses a <span class="highlight">hybrid light RAG approach</span>, combining code chunks for detailed context with knowledge graphs for structural relationships — transforming complex codebases from impenetrable mazes into <span class="highlight">clear, navigable maps</span>.
+            </p>
+            
+            <div class="tech-stack">
+                <span class="tech-item">Knowledge Graphs</span>
+                <span class="tech-item">Retrieval-Augmented Generation</span>
+                <span class="tech-item">LLM Integration</span>
+                <span class="tech-item">Graph Neural Networks</span>
+                <span class="tech-item">Streamlit UI</span>
+            </div>
+
+            <p class="university">Princess Sumaya University for Technology • Graduation Project 2024</p>
+        </div>
+    </div>
+</body>
+</html>
 # [GraphLoom](https://drive.google.com/drive/folders/125z1exlm5WZHQAeCjUlHzaZLf1E48ukN) 
 
 ## Project Overview
