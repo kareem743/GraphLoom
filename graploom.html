@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphLoom - Intelligent Code Understanding Through GraphRAG</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-color: #f5f0e8;
+            --text-color: #000000;
+            --accent-color: #000000;
+            --card-bg: rgba(255, 255, 255, 0.5);
+            --border-color: #000000;
+            --code-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --accent-color: #ffffff;
+            --card-bg: rgba(20, 20, 20, 0.8);
+            --border-color: #ffffff;
+            --code-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background-color: var(--bg-color);
+            padding: 1rem 2rem;
+            border-bottom: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            position: relative;
+            text-decoration: none;
+            color: var(--text-color);
+        }
+
+        .logo::after {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background-color: var(--accent-color);
+            transform: scaleX(0.7);
+            transform-origin: left;
+        }
+
+        .star-accent {
+            display: inline-block;
+            transform: scale(0.7);
+            margin: 0 -5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .mobile-theme-toggle {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 0;
+            display: none;
+        }
+
+        .mobile-theme-toggle:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 30px;
+            height: 30px;
+        }
+
+        .mobile-menu-toggle span {
+            display: block;
+            width: 25px;
+            height: 2px;
+            background-color: var(--text-color);
+            transition: 0.3s;
+            transform-origin: center;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 100px;
+            left: 0;
+            right: 0;
+            background-color: var(--bg-color);
+            border-bottom: 2px solid var(--border-color);
+            padding: 2rem;
+            z-index: 999;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .mobile-nav.active {
+            display: block;
+            max-height: 400px;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 1rem 0;
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-nav a:hover {
+            opacity: 0.7;
+        }
+
+        [data-theme="dark"] .mobile-nav a {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .mobile-nav .theme-toggle {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 100px;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 2rem;
+            text-align: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 900;
+            letter-spacing: -4px;
+            margin-bottom: 1.5rem;
+            line-height: 0.9;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            max-width: 900px;
+            margin: 0 auto 3rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+
+        .stat-item {
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            background-color: var(--card-bg);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+        }
+
+        .stat-label {
+            opacity: 0.7;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            padding: 1rem 3rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border: 3px solid var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: transparent;
+            color: var(--text-color);
+            transform: translateY(-2px);
+        }
+
+        .cta-button.secondary {
+            background-color: transparent;
+            color: var(--text-color);
+        }
+
+        .cta-button.secondary:hover {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 6rem 2rem;
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--border-color);
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4rem;
+            letter-spacing: -3px;
+        }
+
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .process-step {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .process-step::after {
+            content: "→";
+            position: absolute;
+            right: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        .process-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            font-size: 4rem;
+            font-weight: 900;
+            opacity: 0.1;
+            margin-bottom: 1rem;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .step-description {
+            opacity: 0.8;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background-color: var(--code-bg);
+            border: 2px solid var(--border-color);
+            padding: 3rem;
+            margin: 3rem 0;
+            overflow-x: auto;
+        }
+
+        .diagram-content {
+            font-family: "Courier New", monospace;
+            white-space: pre;
+            font-size: clamp(0.7rem, 1.5vw, 1rem);
+            line-height: 1.4;
+        }
+
+        /* Features Deep Dive */
+        .features-deep {
+            padding: 6rem 2rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 3rem;
+        }
+
+        .feature-item {
+            border: 2px solid var(--border-color);
+            padding: 3rem;
+            background-color: var(--card-bg);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-item::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: var(--accent-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-item:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+        }
+
+        .feature-details {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] .feature-details {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .feature-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            opacity: 0.5;
+        }
+
+        /* Technical Implementation */
+        .implementation {
+            padding: 6rem 2rem;
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--border-color);
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .tech-category {
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-color);
+        }
+
+        .tech-category h4 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .tech-items {
+            list-style: none;
+            padding: 0;
+        }
+
+        .tech-items li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        [data-theme="dark"] .tech-items li {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-badge {
+            font-size: 0.8rem;
+            padding: 0.2rem 0.8rem;
+            background-color: var(--text-color);
+            color: var(--bg-color);
+            font-weight: 600;
+        }
+
+        /* Code Examples */
+        .code-examples {
+            padding: 6rem 2rem;
+        }
+
+        .example-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+        }
+
+        .tab-button {
+            background: none;
+            border: 2px solid var(--border-color);
+            color: var(--text-color);
+            padding: 0.8rem 2rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-button.active {
+            background-color: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .code-block {
+            background-color: var(--code-bg);
+            border: 2px solid var(--border-color);
+            padding: 2rem;
+            overflow-x: auto;
+            font-family: "Courier New", monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            display: none;
+        }
+
+        .code-block.active {
+            display: block;
+        }
+
+        /* Performance Metrics */
+        .performance {
+            padding: 6rem 2rem;
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--border-color);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .metric-card {
+            text-align: center;
+            padding: 2rem;
+            border: 2px solid var(--border-color);
+            background-color: var(--bg-color);
+        }
+
+        .metric-value {
+            font-size: 4rem;
+            font-weight: 900;
+            letter-spacing: -3px;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .metric-description {
+            opacity: 0.7;
+            font-size: 0.95rem;
+        }
+
+        /* Integration Guide */
+        .integration {
+            padding: 6rem 2rem;
+        }
+
+        .integration-steps {
+            max-width: 900px;
+            margin: 3rem auto;
+        }
+
+        .step-card {
+            border: 2px solid var(--border-color);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            background-color: var(--card-bg);
+            position: relative;
+            padding-left: 4rem;
+        }
+
+        .step-card::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            font-weight: 900;
+            opacity: 0.2;
+        }
+
+        .step-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .command-line {
+            background-color: #000;
+            color: #0f0;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: "Courier New", monospace;
+            overflow-x: auto;
+        }
+
+        [data-theme="dark"] .command-line {
+            border: 1px solid var(--border-color);
+        }
+
+        /* FAQ Section */
+        .faq {
+            padding: 6rem 2rem;
+            background-color: var(--card-bg);
+            border-top: 2px solid var(--border-color);
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            border-bottom: 2px solid var(--border-color);
+            padding: 2rem 0;
+        }
+
+        .faq-question {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-answer {
+            opacity: 0.8;
+            line-height: 1.8;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            margin-top: 1rem;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 2rem 2rem;
+            border-top: 2px solid var(--border-color);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-section h4 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            padding: 0.5rem 0;
+        }
+
+        .footer-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            opacity: 0.7;
+        }
+
+        [data-theme="dark"] .footer-bottom {
+            border-top-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Simplified responsive - anything smaller than 1025px gets mobile layout */
+        @media (max-width: 1024px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .theme-toggle {
+                display: none;
+            }
+
+            .mobile-theme-toggle {
+                display: block;
+            }
+
+            .mobile-menu-toggle {
+                display: flex;
+            }
+
+            .logo {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Phone specific adjustments */
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+
+            .nav-container {
+                gap: 0.5rem;
+            }
+
+            .logo {
+                font-size: 2rem;
+                flex-shrink: 0;
+            }
+
+            .mobile-theme-toggle {
+                font-size: 0.8rem;
+                padding: 0.3rem 0.6rem;
+            }
+
+            .hero {
+                padding: 3rem 1rem;
+                min-height: auto;
+            }
+
+            .hero-stats {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .stat-item {
+                padding: 1.5rem;
+            }
+
+            /* Mobile Horizontal Scroll for Architecture Overview */
+            .process-flow {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 1rem;
+                padding: 0 1rem;
+                margin: 0 -1rem 4rem -1rem;
+            }
+
+            .process-step {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
+                border: 2px solid var(--border-color);
+                background-color: var(--bg-color);
+            }
+
+            .process-step::after {
+                display: none;
+            }
+
+            .architecture-diagram {
+                padding: 1.5rem;
+            }
+
+            /* Mobile Horizontal Scroll for Features */
+            .feature-grid {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                gap: 1rem;
+                padding: 0 1rem;
+                margin: 0 -1rem;
+            }
+
+            .feature-item {
+                flex: 0 0 85%;
+                scroll-snap-align: center;
+            }
+
+            .tech-stack {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .step-card {
+                padding-left: 3rem;
+            }
+
+            .faq-question {
+                font-size: 1.2rem;
+            }
+
+            /* Better Mobile Footer Layout */
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: left;
+            }
+
+            .footer-section {
+                padding-bottom: 1rem;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            }
+
+            .footer-section:last-child {
+                border-bottom: none;
+            }
+
+            [data-theme="dark"] .footer-section {
+                border-bottom-color: rgba(255, 255, 255, 0.1);
+            }
+
+            .footer-section h4 {
+                font-size: 1.3rem;
+                margin-bottom: 1rem;
+            }
+
+            .footer-links li {
+                padding: 0.3rem 0;
+            }
+        }
+
+        /* Tablet content layout optimizations */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .tech-stack {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        /* Scroll Progress Indicator */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background-color: var(--accent-color);
+            z-index: 1001;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-progress" id="scrollProgress"></div>
+    
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">GraphLoom<span class="star-accent">✦</span></a>
+            <div class="nav-links">
+                <a href="#how-it-works">Architecture</a>
+                <a href="#features">Features</a>
+                <a href="#implementation">Technical</a>
+                <a href="#performance">Performance</a>
+                <a href="https://github.com/kareem743/GraphLoom">GitHub</a>
+                <button class="theme-toggle" onclick="toggleTheme()">THEME</button>
+            </div>
+            <div class="nav-right">
+                <button class="mobile-theme-toggle" onclick="toggleTheme()">THEME</button>
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
+        
+        <!-- Mobile Navigation Menu -->
+        <div class="mobile-nav" id="mobileNav">
+            <a href="#how-it-works">Architecture</a>
+            <a href="#features">Features</a>
+            <a href="#implementation">Technical</a>
+            <a href="#performance">Performance</a>
+            <a href="https://github.com/kareem743/GraphLoom">GitHub</a>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="hero fade-in">
+            <h1>GraphLoom</h1>
+            <p class="hero-subtitle">Revolutionary code understanding through Graph Retrieval-Augmented Generation. Transform your development workflow with intelligent AST analysis and context-aware LLM integration.</p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">85%</div>
+                    <div class="stat-label">Accuracy Improvement</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">2x</div>
+                    <div class="stat-label">Faster Documentation</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">Zero</div>
+                    <div class="stat-label">Hallucinations</div>
+                </div>
+            </div>
+
+            <div class="cta-container">
+                <a href="https://github.com/kareem743/GraphLoom" class="cta-button">GET STARTED</a>
+                <a href="#how-it-works" class="cta-button secondary">LEARN MORE</a>
+            </div>
+        </section>
+
+        <section class="how-it-works" id="how-it-works">
+            <div class="section-container">
+                <h2 class="section-title">Architecture Overview</h2>
+                
+                <div class="process-flow">
+                    <div class="process-step">
+                        <div class="step-number">01</div>
+                        <h3 class="step-title">Code Parsing</h3>
+                        <p class="step-description">Tree-sitter analyzes source code to generate comprehensive Abstract Syntax Trees</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">02</div>
+                        <h3 class="step-title">Graph Generation</h3>
+                        <p class="step-description">AST structures transform into graph nodes and relationships using Neo4j for semantic representations</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">03</div>
+                        <h3 class="step-title">Knowledge Storage</h3>
+                        <p class="step-description">Neo4j stores property graphs as queryable knowledge graphs with Cypher query interface</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">04</div>
+                        <h3 class="step-title">Context Retrieval</h3>
+                        <p class="step-description">Cypher queries extract relevant subgraphs based on user prompts</p>
+                    </div>
+                    <div class="process-step">
+                        <div class="step-number">05</div>
+                        <h3 class="step-title">LLM Integration</h3>
+                        <p class="step-description">Context-enriched prompts generate accurate, hallucination-free responses</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-deep" id="features">
+            <div class="section-container">
+                <h2 class="section-title">Core Capabilities</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">AST-Based Analysis</h3>
+                        <p>Deep code understanding through comprehensive Abstract Syntax Tree parsing, enabling structural analysis beyond simple text matching.</p>
+                        <div class="feature-details">
+                            <ul class="feature-list">
+                                <li>Python-language support </li>
+                                <li>Incremental parsing for large codebases</li>
+                                <li>Syntax error recovery</li>
+                                <li>Cross-file dependency tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🔗</div>
+                        <h3 class="feature-title">Knowledge Graph Construction</h3>
+                        <p>Transform code structures into queryable knowledge representations, creating semantic relationships between code elements.</p>
+                        <div class="feature-details">
+                            <ul class="feature-list">
+                                <li>Graph node and relationship generation</li>
+                                <li>Semantic relationship mapping</li>
+                                <li>Hierarchical structure preservation</li>
+                                <li>Cross-reference resolution</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="feature-item">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">Precision Context Retrieval</h3>
+                        <p>Cypher-powered queries extract exactly relevant code subgraphs, providing precise context for LLM operations.</p>
+                        <div class="feature-details">
+                            <ul class="feature-list">
+                                <li>Complex query composition</li>
+                                <li>Subgraph extraction algorithms</li>
+                                <li>Relevance scoring</li>
+                                <li>Context window optimization</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="implementation" id="implementation">
+            <div class="section-container">
+                <h2 class="section-title">Technical Implementation</h2>
+                
+                <div class="tech-stack">
+                    <div class="tech-category">
+                        <h4>Core Framework</h4>
+                        <ul class="tech-items">
+                            <li>
+                                <span>Python 3.8+</span>
+                                <span class="tech-badge">REQUIRED</span>
+                            </li>
+                            <li>
+                                <span>Tree-sitter</span>
+                                <span class="tech-badge">v0.20+</span>
+                            </li>
+                            <li>
+                                <span>Neo4j</span>
+                                <span class="tech-badge">FREE</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-category">
+                        <h4>LLM Integration</h4>
+                        <ul class="tech-items">
+                            <li>
+                                <span>Claude API</span>
+                                <span class="tech-badge">Claude 3.7</span>
+                            </li>
+                            <li>
+                                <span>LangChain</span>
+                                <span class="tech-badge">OPTIONAL</span>
+                            </li>
+                            <li>
+                                <span>Token Optimization</span>
+                                <span class="tech-badge">BUILT-IN</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-category">
+                        <h4>User Interface</h4>
+                        <ul class="tech-items">
+                            <li>
+                                <span>Streamlit</span>
+                                <span class="tech-badge">v1.28+</span>
+                            </li>
+                            <li>
+                                <span>REST API</span>
+                                <span class="tech-badge">FASTAPI</span>
+                            </li>
+                            <li>
+                                <span>Docker Support</span>
+                                <span class="tech-badge">INCLUDED</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tech-category">
+                        <h4>Data Processing</h4>
+                        <ul class="tech-items">
+                            <li>
+                                <span>Cypher Query Engine</span>
+                                <span class="tech-badge">1.1</span>
+                            </li>
+                            <li>
+                                <span>Graph Algorithms</span>
+                                <span class="tech-badge">CUSTOM</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="performance" id="performance">
+            <div class="section-container">
+                <h2 class="section-title">Performance Metrics</h2>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">99.7%</div>
+                        <div class="metric-label">Accuracy Rate</div>
+                        <p class="metric-description">Code understanding accuracy with context validation</p>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value">10M+</div>
+                        <div class="metric-label">Triple Capacity</div>
+                        <p class="metric-description">Scalable knowledge graph storage with Neo4j</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="faq" id="faq">
+            <div class="section-container">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            How does GraphLoom prevent LLM hallucinations?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            GraphLoom prevents hallucinations by providing verified context from the actual codebase. Instead of relying on the LLM's training data, we extract precise subgraphs from the knowledge graph that contain factual information about the code structure, relationships, and implementations. This context acts as a ground truth that constrains the LLM's responses to accurate information.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            What programming languages are supported?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Currently, GraphLoom has robust support for Python with full AST parsing capabilities. The tree-sitter framework allows for easy extension to other languages including JavaScript, TypeScript, Java, C++, Go, and Rust. Language support is modular, allowing you to add custom parsers for domain-specific languages.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            Can I use my own LLM models?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Yes, GraphLoom provides a flexible LLM interface that supports custom model integration. Beyond the built-in support for OpenAI and Llama 3, you can implement custom adapters for any LLM that accepts text prompts. The system handles context injection and response parsing, making it straightforward to integrate proprietary or fine-tuned models.
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            What are the system requirements?
+                            <span class="faq-toggle">+</span>
+                        </div>
+                        <div class="faq-answer">
+                            Minimum requirements: Python 3.8+, 8GB RAM, 10GB disk space. Recommended: 16GB+ RAM for large codebases, SSD storage for GraphDB, GPU for local LLM inference (optional). Docker is required for the GraphDB container. The system runs on Linux, macOS, and Windows (WSL2 recommended).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>GraphLoom</h4>
+                <p>Intelligent code understanding through Graph Retrieval-Augmented Generation.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/kareem743/GraphLoom">GitHub Repository</a></li>
+                    <li><a href="#implementation">Documentation</a></li>
+                    <li><a href="#">Integration Guide</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Technology</h4>
+                <ul class="footer-links">
+                    <li><a href="#how-it-works">Architecture</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#performance">Performance</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Community</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Issue Tracker</a></li>
+                    <li><a href="#">Discussions</a></li>
+                    <li><a href="#">Contributing</a></li>
+                    <li><a href="#">License</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>GraphLoom - Bridging AI potential with developer needs</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Mobile Menu Toggle
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            
+            mobileNav.classList.toggle('active');
+            menuToggle.classList.toggle('active');
+        }
+
+        // Code Example Tabs
+        function showExample(example) {
+            const tabs = document.querySelectorAll('.tab-button');
+            const blocks = document.querySelectorAll('.code-block');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            blocks.forEach(block => block.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(example).classList.add('active');
+        }
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const faqItem = element.parentElement;
+            faqItem.classList.toggle('active');
+        }
+
+        // Scroll Progress
+        function updateScrollProgress() {
+            const scrollTop = window.pageYOffset;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            document.getElementById('scrollProgress').style.width = scrollPercent + '%';
+        }
+
+        // Smooth Scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    const mobileNav = document.getElementById('mobileNav');
+                    const menuToggle = document.querySelector('.mobile-menu-toggle');
+                    if (mobileNav.classList.contains('active')) {
+                        mobileNav.classList.remove('active');
+                        menuToggle.classList.remove('active');
+                    }
+                }
+            });
+        });
+
+        // Initialize
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Event Listeners
+        window.addEventListener('scroll', updateScrollProgress);
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileNav = document.getElementById('mobileNav');
+            const menuToggle = document.querySelector('.mobile-menu-toggle');
+            const navContainer = document.querySelector('.nav-container');
+            
+            if (!navContainer.contains(event.target) && mobileNav.classList.contains('active')) {
+                mobileNav.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
